@@ -1,4 +1,4 @@
-# The Quest for a Reliable, Robust, Reproducable Raspberry Pi-based Weather Station
+# The Quest for a Reliable, Robust, Repairable Raspberry Pi-based Weather Station
 Project Initialized October 2019
 
 ### A bit of History
