@@ -9,7 +9,7 @@ The goal of this project is to take advantage of the availability of the modular
 
 The project is being written in Python 3.  I am making every attempt to provide enough documentation and schematics for anyone else to duplicate what I've done.
 
-I am a self-taught rank amatuer coder, as anyone with experience can plainly see.  What I know is what I've done so far works here, and provides me with reliable and accurate data as compared to all the local commercial and government data sources.  
+I am a self-taught rank amateur coder, as anyone with experience can plainly see.  What I know is what I've done so far works here, and provides me with reliable and accurate data as compared to all the local commercial and government data sources.  
 
 I use Visual Studio Code in Windows.  I use Microsoft's Remote-SSH extensions to work with my code on the weather station Pi out on the pole in the backyard.
 I use Filezilla to keep local copies of that code when I'm done editing and testing.
