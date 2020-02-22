@@ -4,6 +4,8 @@ Project opened to public on Github February 2020.
 
 This project is actively underway, and changes can occur at any time.  My station is up and running.  It works.  No guarantees are made. None.
 
+I do not yet have a complete parts list for you.  Nor do I have step-by-step instructions.  I'm just a guy, not a foundation, who loves to make things that work.  Then I like to share them with others who might benefit from a bit of data I happen to share.
+
 ### A bit of History
 
 After throwing away my second Acurite weather station in only two years I decided I would build my own.  It may be cheaper to buy a more expensive commercial brand like Davis, but honestly, I'm sick of the throw-away culture when I can do something about it.
