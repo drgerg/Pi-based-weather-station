@@ -29,7 +29,7 @@ I own a Prusa MK3S 3D printer which I use to make mounts and other custom parts 
 
 
 
-[RRRRPWS on the pole.](./Pics/RRRRPWS-on-the-pole.jpg)
+![RRRRPWS on the pole.](./Pics/RRRRPWS-on-the-pole.jpg)
 
 
 
