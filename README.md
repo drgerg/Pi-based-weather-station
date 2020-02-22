@@ -14,9 +14,11 @@ I am a self-taught rank amateur coder, as anyone with experience can plainly see
 I use Visual Studio Code in Windows.  I use Microsoft's Remote-SSH extensions to work with my code on the weather station Pi out on the pole in the backyard.
 I use Filezilla to keep local copies of that code when I'm done editing and testing.
 
-The system runs on a Pi 4 Model B.  I have a real-time clock module, a analog-to-digital module, and a BME280 temperature, pressure, humidity sensor module.
+The system runs on a Pi 4 Model B.  Rather than re-invent the wheel on environmental sensors, I bought [Sparkfun's SEN-08942 Weather Meters](https://www.sparkfun.com/products/8942). I have a DROK buck-converter DC-to-DC power board, a real-time clock module, a analog-to-digital module, and a BME280 temperature, pressure, humidity sensor module all living in the box on the pole.
 
 I incorporated the solar cell powered fan from one of the dead Acurite stations.  There are other ways to accomplish the job it does, but I had it, and I used it.
+
+The station 
 
 
 
