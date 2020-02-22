@@ -1,6 +1,8 @@
 # The Quest for a Reliable, Robust, Repairable Raspberry Pi-based Weather Station
-Project Initialized October 2019
-Project opened to public on Github February 2020
+Project Initialized October 2019.
+Project opened to public on Github February 2020.
+
+This project is actively underway, and changes can occur at any time.  My station is up and running.  It works.  No guarantees are made. None.
 
 ### A bit of History
 
