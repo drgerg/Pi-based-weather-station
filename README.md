@@ -4,7 +4,7 @@ Project opened to public on Github February 2020
 
 ### A bit of History
 
-After throwing away my second Acurite weather station in only two years I decided I would build my own.
+After throwing away my second Acurite weather station in only two years I decided I would build my own.  It may be cheaper to buy a more expensive commercial brand like Davis, but honestly, I'm sick of the throw-away culture when I can do something about it.
 
 The goal of this project is to take advantage of the availability of the modular Pi and Arduino sensors and boards to create a weather station that I could repair when something died.  The Pi lives on the pole with the sensors, and communicates over WiFi.
 
