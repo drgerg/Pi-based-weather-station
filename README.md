@@ -2,7 +2,9 @@
 Project Initialized October 2019.
 Project opened to public on Github February 2020.
 
-This project is actively underway, and changes can occur at any time.  My station is up and running.  It works.  No guarantees are made. None.
+My station is up and running.  It works.  I get good, accurate, stable readings for temperature, pressure, humidity, wind speed, wind direction.  The tipping bucket rain gauge works, but my code is still incomplete for rainfall. 
+
+No guarantees are made. None. This project is actively underway, and changes can occur at any time.
 
 I do not yet have a complete parts list for you.  Nor do I have step-by-step instructions.  I'm just a guy, not a foundation, who loves to make things that work.  Then I like to share them with others who might benefit from a bit of data I happen to share.
 
