@@ -6,7 +6,7 @@ My station is up and running.  It works.  I get good, accurate, stable readings 
 
 No guarantees are made. None. This project is actively underway, and changes can occur at any time.
 
-I do not yet have a complete parts list for you.  Nor do I have step-by-step instructions.  I'm just a guy, not a foundation, who loves to make things that work.  Then I like to share them with others who might benefit from a bit of data I happen to share.
+I do not <b>yet</b> have a complete parts list for you.  Nor do I have step-by-step instructions.  I'm just a guy, not a foundation, who loves to make things that work.  Then I like to share them with others who might benefit from a bit of data I happen to share.
 
 ### A bit of History
 
