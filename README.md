@@ -4,9 +4,9 @@ Project opened to public on Github February 2020.
 ![RRRRPWS on the pole.](./Pics/RRRRPWS-on-the-pole.jpg)
 My station is up and running.  It works.  I get good, accurate, stable readings for temperature, pressure, humidity, wind speed, wind direction.  The tipping bucket rain gauge works, but my code is still incomplete for rainfall. 
 
-This is not a quick-and-easy project.  The station itself is powered by a 12VDC source.  In my case, I dug a trench, put conduit in it, and pulled 14AWG Romex into it.  It's a good, cheap(ish) solution.  I drove ground rods and put in-line lighting/surge protectors on both ends of that power run.
+This is not a quick-and-easy project.  The station itself is powered by a remote 12VDC power supply with a battery backup.  I dug a trench, put PVC conduit in it, and pulled 14AWG Romex into it.  It's a good, cheap(ish) solution.  I drove ground rods and put in-line lighting/surge protectors on both ends of that power run.
 
-The station code aquires data from the sensors, makes necessary calculations and stores that data via WiFi to a mySQL server running in my house.
+The whole Weather Station package is really two computers.  The station aquires data from the sensors, makes necessary calculations and stores that data via WiFi to a mySQL server running in my house.  That machine also serves data to end-users using Python/Flask/Jinja/Gunicorn and nginx (webserver).
 
 No guarantees are made. None. This project is actively underway, and changes can occur at any time.
 
@@ -18,7 +18,7 @@ After throwing away my second Acurite weather station in only two years I decide
 
 The goal of this project is to take advantage of the availability of the modular Pi and Arduino sensors and boards to create a weather station that I could repair when something died.  The Pi lives on the pole with the sensors, and communicates over WiFi.
 
-The project is being written in Python 3. Flask, Gunicorn and nginx are used to display info to users. Everything stays here, this is not ever going to be on the web, although I do intend to eventually upload data to a PWS site like [this one](https://beta.pwsweather.com/). 
+The project is being written in Python 3. Everything stays here, this is not ever going to be on the web, although I do intend to eventually upload data to a PWS site like [this one](https://www.pwsweather.com/). 
 
 I am making every attempt to provide enough documentation and schematics for anyone else to duplicate what I've done.
 
