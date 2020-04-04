@@ -6,11 +6,11 @@ My station is up and running.  It works.  I get good, accurate, stable readings 
 
 Here's what's where:  (remember: this is all in progress still)
 
-- Code: contains the Python3 code in the 'out' folder.  Also contains 'The_Code_is_what_it_is.md' which provides some details on the soft side of the project.
-- Component_Docs: contains collected documentation for the various hardward pieces of the station.
-- Pics: contains pictures of the pieces and parts (640x480).  Contact me if you want higher resolution pics.
-- SKP_STL: contains the Sketchup and stereolithography files for the 3D printed parts I designed for this project.
-- Station_Assembly_Docs: contains documents pertaining to the actual assembly of the station.  
+- **Code**: contains the Python3 code in the 'out' folder.  Also contains 'The_Code_is_what_it_is.md' which provides some details on the soft side of the project.
+- **Component_Docs**: contains collected documentation for the various hardware pieces of the station.
+- **Pics**: contains pictures of the pieces and parts (640x480).  Contact me if you want higher resolution pics.
+- **SKP_STL**: contains the Sketchup and stereolithography files for the 3D printed parts I designed for this project.
+- **Station_Assembly_Docs**: contains documents pertaining to the actual assembly of the station.  
 
 This is not a quick-and-easy project.  The station itself is powered by a remote 12VDC power supply with a battery backup.  I dug a trench, put PVC conduit in it, and pulled 14AWG Romex into it.  It's a good, cheap(ish) solution.  I drove ground rods and put in-line lighting/surge protectors on both ends of that power run.
 
