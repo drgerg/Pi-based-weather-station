@@ -3,7 +3,7 @@ Project Initialized October 2019.
 Project opened to public on Github February 2020.
 ![RRRRPWS on the pole.](./Pics/RRRRPWS-on-the-pole.jpg)  ![Output as seen in browser.](./Pics/Output-to-browser.jpg)
 
-My station is up and running.  It works.  I get good, accurate, stable readings for temperature, pressure, humidity, wind speed, wind direction.  The tipping bucket rain gauge works, but my code is still incomplete for rainfall. 
+My station is up and running.  It works.  I get good, accurate, stable readings for temperature, pressure, humidity, wind speed, wind direction.  The tipping bucket rain gauge works, but my code is still incomplete for rainfall. I'm adding a rain detector to trigger the start of rainfall data.
 
 Here's what's where:  (remember: this is all in progress still)
 
