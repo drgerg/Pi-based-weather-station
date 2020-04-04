@@ -6,7 +6,7 @@ My station is up and running.  It works.  I get good, accurate, stable readings 
 
 This is not a quick-and-easy project.  The station itself is powered by a remote 12VDC power supply with a battery backup.  I dug a trench, put PVC conduit in it, and pulled 14AWG Romex into it.  It's a good, cheap(ish) solution.  I drove ground rods and put in-line lighting/surge protectors on both ends of that power run.
 
-The whole Weather Station package is really two computers.  The station aquires data from the sensors, makes necessary calculations and stores that data via WiFi to a mySQL server running in my house.  That machine also serves data to end-users using Python/Flask/Jinja/Gunicorn and nginx (webserver).
+The whole Weather Station package is really two computers.  The station aquires data from the sensors, makes necessary calculations and stores that data via WiFi to a mySQL server running in my house.  That machine also serves data to end-users using Python/Flask/Jinja/Gunicorn and nginx (webserver).  Video from the Pi Camera gets sent to my Zoneminder system. That video can be viewed directly from the station using a web browswer, but I already had Zoneminder going, so it just made sense to incorporate the feed from the WeatherPi.
 
 No guarantees are made. None. This project is actively underway, and changes can occur at any time.
 
