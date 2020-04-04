@@ -4,7 +4,9 @@ Project opened to public on Github February 2020.
 ![RRRRPWS on the pole.](./Pics/RRRRPWS-on-the-pole.jpg)
 My station is up and running.  It works.  I get good, accurate, stable readings for temperature, pressure, humidity, wind speed, wind direction.  The tipping bucket rain gauge works, but my code is still incomplete for rainfall. 
 
-This is not a quick-and-easy project.  The station itself is powered by a 12VDC source.  In my case, I dug a trench, put conduit in it, and pulled 14AWG Romex into it.  It's a good, cheap(ish) solution.  The station code aquires data from the sensors, makes necessary calculations and stores that data via WiFi to a mySQL server running in my house.
+This is not a quick-and-easy project.  The station itself is powered by a 12VDC source.  In my case, I dug a trench, put conduit in it, and pulled 14AWG Romex into it.  It's a good, cheap(ish) solution.  I drove ground rods and put in-line lighting/surge protectors on both ends of that power run.
+
+The station code aquires data from the sensors, makes necessary calculations and stores that data via WiFi to a mySQL server running in my house.
 
 No guarantees are made. None. This project is actively underway, and changes can occur at any time.
 
