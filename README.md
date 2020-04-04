@@ -33,7 +33,7 @@ I am making every attempt to provide enough documentation and schematics for any
 
 I am a self-taught rank amateur coder, as anyone with experience can plainly see.  What I know is what I've done so far works here, and provides me with reliable and accurate data as compared to all the local commercial and government data sources.  
 
-I use Visual Studio Code in Windows.  I use Microsoft's Remote-SSH extensions to work with my code on the weather station Pi out on the pole in the backyard.  The WeatherPi stores its data in an mySQL database running on another machine in the house. I use Filezilla to keep local copies of my code when I'm done editing and testing.
+I use Visual Studio Code in Windows.  I use Microsoft's Remote-SSH extensions to work with my code on the WeatherPi out on the pole in the backyard.  The WeatherPi stores its data in a mySQL database running on another machine in the house. I use Filezilla to keep local copies of my code when I'm done editing and testing.
 
 The system runs on a Pi 4 Model B.  Rather than re-invent the wheel on environmental sensors, I bought [Sparkfun's SEN-08942 Weather Meters](https://www.sparkfun.com/products/8942). I have a [DROK buck-converter](./Pics/DROK-Buck-Converter-mount.jpg) DC-to-DC power board, a real-time clock module, a analog-to-digital module, and a BME280 temperature, pressure, humidity sensor module all living in the box on the pole.  A Pi Camera v2 provides a 640x480 view of the outdoor conditions.  
 
