@@ -1,7 +1,7 @@
 # The Quest for a Reliable, Robust, Repairable Raspberry Pi-based Weather Station
 Project Initialized October 2019.
 Project opened to public on Github February 2020.
-
+![RRRRPWS on the pole.](./Pics/RRRRPWS-on-the-pole.jpg)
 My station is up and running.  It works.  I get good, accurate, stable readings for temperature, pressure, humidity, wind speed, wind direction.  The tipping bucket rain gauge works, but my code is still incomplete for rainfall. 
 
 No guarantees are made. None. This project is actively underway, and changes can occur at any time.
@@ -33,7 +33,7 @@ I own a Prusa MK3S 3D printer which I use to make mounts and other custom parts 
 
 
 
-![RRRRPWS on the pole.](./Pics/RRRRPWS-on-the-pole.jpg)
+
 
 
 
