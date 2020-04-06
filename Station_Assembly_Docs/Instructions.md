@@ -1,4 +1,4 @@
-# Instructions (as the become available)
+# Instructions (as they become available)
 
 Turn off power save mode on the Pi's built-in Wifi radio.  You can see the status of this mode with:
 
