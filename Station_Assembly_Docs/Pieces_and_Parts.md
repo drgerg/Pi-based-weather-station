@@ -21,8 +21,6 @@ I listed these parts because having a stock of this stuff saves me a lot of time
 
 # Random Notes Toward a Better Repository
 
-Three systemctl .service files:  outApp.service, outCam.service, outMain.service
+Two systemctl .service files:  outCam.service, outMainDATA.service
 
-Located in /lib/systemd/system/ 
-
-(nginx.service also exists, but I think that's automatically created.  Need to check to be sure.)
+Those files are located in /lib/systemd/system/ 
