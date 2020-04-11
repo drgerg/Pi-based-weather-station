@@ -33,7 +33,7 @@ rstart = 0
 accResults = []
 pklData = []
 tableData = []
-
+numBadPings = 0
 pressure = 0
 outTemp = 0
 outHumidity = 0
@@ -186,7 +186,7 @@ def bme():
 # the .pkl file (which overwrites it if it existed) and then swing back around to do it all again.
 #
 def mydb():
-    global pklData
+    global pklData,numBadPings
     # Get current values from all the sensors.
     pressure,outTemp,outHumidity,extraHumid1,windSpeed,winddir,wdirStr = datagrabber()
     # Get the vent fan RPM from the pickle file.
@@ -224,10 +224,11 @@ def mydb():
     DBtable=config.get('mySQL','Table1')
     # Don't stop now . . . keep going!!!
     ## Check to see if we can ping the machine mySQL is running on
-    numBadPings = 0
     pingRes = os.system("ping -c 1 " + DBhost + " > /dev/null 2>&1")  ## Ping test to make sure the SQL machine is there.
     logger.debug("Ping for server returned: " + str(pingRes))
     if pingRes == 0:                                        # We are connected.  Move ahead.  If not, don't do any of this stuff.
+        if numBadPings > 0:
+            logger.info("Connection to SQL server machine restored.")
         numBadPings = 0                                     # Prep the data, and send it to the SQL machine.
         for row in pklData:                                 # Normally there will only be one row. UNLESS the network was down, 
             dtNow = row[0]                                  # in which case there can be many.
