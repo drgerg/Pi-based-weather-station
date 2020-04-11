@@ -139,7 +139,6 @@ def wDirCvt(wdegval):
 # Td = T - ((100 - RH)/5.)
 #   
 #   THESE ARE THE FINAL VARIABLES WE WANT TO PASS TO THE DATABASE
-#   The database name is 'weewx' and the table is 'archive'.
 #   
 #   pressure
 #   outTemp
