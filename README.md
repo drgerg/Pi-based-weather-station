@@ -10,7 +10,7 @@ This project is not an easy one, but if I can build it, so can other people.
 Here's what's where:  (remember: this is all in progress still)
 
 - **Code**: contains the Python3 code in the 'out' folder.  Also contains 'The_Code_is_what_it_is.md' which provides some details on the soft side of the project.
-- **Component_Docs**: contains collected documentation for the various hardware pieces of the station.
+- **Component_Docs**: contains collected documentation for the various hardware pieces of the station.  The Station_Parts_List.xlsx is being built there.
 - **Pics**: contains pictures of the pieces and parts (640x480).  Contact me if you want higher resolution pics.
 - **SKP_STL**: contains the Sketchup and stereolithography files for the 3D printed parts I designed for this project.
 - **Station_Assembly_Docs**: contains documents pertaining to the actual assembly of the station. 
