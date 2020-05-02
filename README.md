@@ -3,7 +3,9 @@ Project Initialized October 2019.
 Project opened to public on Github February 2020.
 ![RRRRPWS on the pole.](./Pics/RRRRPWS-on-the-pole.jpg)  ![Output as seen in browser.](./Pics/Output-to-browser.jpg)
 
-My station is up and running.  It works.  I get good, accurate, stable readings for temperature, pressure, humidity, wind speed, wind direction.  The tipping bucket rain gauge works, but my code is still incomplete for rainfall. I'm adding a rain detector to trigger the start of rainfall data.
+My station is up and running.  It works.  I get good, accurate, stable readings for temperature, pressure, humidity, wind speed, wind direction and rainfall. 
+
+This project is not an easy one, but if I can build it, so can other people.
 
 Here's what's where:  (remember: this is all in progress still)
 
@@ -14,7 +16,7 @@ Here's what's where:  (remember: this is all in progress still)
 - **Station_Assembly_Docs**: contains documents pertaining to the actual assembly of the station. 
   - **There are no step-by-step instructions there.**  But there is a [block diagram](./Station_Assembly_Docs/System_Block_Diagram.pdf) and a [schematic diagram](./Station_Assembly_Docs/WeatherPi_System_Schematic-V1.2.pdf).
 
-This is not a quick-and-easy project.  The station itself is powered by a remote 12VDC power supply with a battery backup.  I dug a trench, put PVC conduit in it, and pulled 14AWG Romex into it.  It's a good, cheap(ish) solution.  I drove ground rods and put in-line lighting/surge protectors on both ends of that power run.  I used a power supply made for controlled access doors.  A benefit of doing that is it has a timed relay built in.  By routing the 12V output of the supply through that relay, I have a way to remotely power-cycle (reboot) the station.  This has been VERY handy during this development stage.
+This is not a quick-and-easy project.  The station is powered by a remote 12VDC power supply with a battery backup.  I dug a trench, put PVC conduit in it, and pulled 14AWG Romex into it.  It's a good, cheap(ish) solution.  I drove ground rods and put in-line lighting/surge protectors on both ends of that power run.  I used a power supply made for controlled access doors.  A benefit of doing that is it has a timed relay built in.  By routing the 12V output of the supply through that relay, I have a way to remotely power-cycle (reboot) the station.  This has been VERY handy during this development stage.
 
 The whole Weather Station package is really two computers.  The station acquires data from the sensors, makes necessary calculations and stores that data via WiFi to a mySQL server running in my house.  That machine also serves data to end-users using Python/Flask/Jinja/Gunicorn and nginx (webserver).  Video from the Pi Camera gets sent to my Zoneminder system. That video **can** be viewed directly from the station using a web browser, but I already had Zoneminder going, so it just made sense to incorporate the feed from the WeatherPi.
 
@@ -28,11 +30,11 @@ After throwing away my second Acurite weather station in only two years I decide
 
 The goal of this project is to take advantage of the availability of the modular Pi and Arduino sensors and boards to create a weather station that I could repair when something died.  The Pi lives on the pole with the sensors, and communicates over WiFi.
 
-The project is being written in Python 3. Everything stays here, this is not ever going to be on the web, although I do intend to eventually upload data to a PWS site like [this one](https://www.pwsweather.com/). 
+The project is being written in Python 3. Everything stays here, this is not ever going to be on the web, although I do upload data to a [PWS site](https://www.pwsweather.com/). 
 
 I am making every attempt to provide enough documentation and schematics for anyone else to duplicate what I've done.
 
-I am a self-taught rank amateur coder, as anyone with experience can plainly see.  What I know is what I've done so far works here, and provides me with reliable and accurate data as compared to all the local commercial and government data sources.  
+I am a self-taught coder, as anyone with experience can plainly see.  What I know is what I've done so far works here, and provides me with reliable and accurate data as compared to all the local commercial and government data sources.  
 
 I use Visual Studio Code in Windows.  I use Microsoft's Remote-SSH extensions to work with my code on the WeatherPi out on the pole in the backyard.  The WeatherPi stores its data in a mySQL database running on another machine in the house. I use Filezilla to keep local copies of my code when I'm done editing and testing.
 
