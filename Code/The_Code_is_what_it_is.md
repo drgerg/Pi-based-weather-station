@@ -13,7 +13,8 @@ Getting the hardware put together is not a trivial process, so the code I have i
 03-28-2020 - In spite of the fact that my code is still VERY trashy, it is working as I intended, and for that reason I'm going ahead and putting it up here.  
 05/13/2020 - Things are getting a bit less trashy.  It's a slow process.  I have a day job.
 
-# Necessary files from the 'out' directory.  These are the basis of the system:
+# Necessary files from the 'out' directory.  
+These are the basis of the system:
 
 - bme280.py - module that gets data from the temperature, humidity, pressure sensor.
 - outMainDATA.py - this is the core of the data gathering system. It is run by outMainDATA.service at boot.
