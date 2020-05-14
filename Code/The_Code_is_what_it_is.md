@@ -32,8 +32,9 @@ Getting the hardware put together is not a trivial process, so the code I have i
 
 # Inside the _lib_systemd_system_ folder:
 
-These files live in /lib/systemd/system and are owned by root:root .  Just copying them there is not enough.  There are proper
-steps you need to follow to use them.  [Learn More](https://www.raspberrypi.org/documentation/linux/usage/systemd.md)
+These files live in /lib/systemd/system and are owned by root:root .  Just copying them there is not enough.  You need to edit them to
+get your own system's data in them first, Then there are proper steps you need to follow to use them.
+[Learn More](https://www.raspberrypi.org/documentation/linux/usage/systemd.md)
 
 - outBgFan.service - starts the vent fan on boot.
 - outCam.service - starts the eye-on-the-sky cam on boot.
