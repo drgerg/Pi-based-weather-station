@@ -88,7 +88,13 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 ##
 ## with picamera.PiCamera(resolution='640x480', framerate=24) as camera:
 ##
-with picamera.PiCamera(resolution='640x480', framerate=15) as camera:
+with picamera.PiCamera() as camera:
+    camera.resolution = (1280,720)
+    camera.framerate = 15
+    # camera.framerate = 2              ## These four lines set up a night-time
+    # camera.shutter_speed = 500000     ## mode that will capture images at night
+    # camera.sensor_mode = 3            ## with the help of the outdoor lights.
+    # camera.ISO = 800                  ## Comment out the framerate = 15 and uncomment these.
     output = StreamingOutput()
     #Uncomment the next line to change your Pi's Camera rotation (in degrees)
     #camera.rotation = 90

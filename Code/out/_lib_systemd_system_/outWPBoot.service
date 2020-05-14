@@ -1,0 +1,19 @@
+[Unit]
+Description=Sanders WeatherPi ReBoot on demand handler
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/home/YourUserName/out/wPiBoot.py
+WorkingDirectory=/home/YourUserName/out/
+StandardOutput=syslog
+StandardError=syslog
+User=root
+Group=root
+#ExecStop = /bin/kill -2 $MAINPID
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

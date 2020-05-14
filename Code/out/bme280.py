@@ -180,7 +180,8 @@ def readBME280All(addr=DEVICE):
   #
   humidity = (hum_raw - (dig_H4 * 64.0 + dig_H5 / 16384.0 * humidity)) * (dig_H2 / 65536.0 * (1.0 + dig_H6 / 67108864.0 * humidity * (1.0 + dig_H3 / 67108864.0 * humidity)))
 #  print("          Humidity1: " + str(humidity))
-  humidity = humidity * (1.0 - dig_H1 * humidity / 524288.0)
+#  humidity = humidity * (1.0 - dig_H1 * humidity / 524288.0)
+  humidity = humidity * (1.0 - dig_H1 * humidity / 110000.0)  # further adjustment to bring humidity readings in line with multiple nearby stations
   preHum = humidity
 #  print("          Humidity2: " + str(humidity))
   if humidity > 100:

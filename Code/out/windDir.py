@@ -19,8 +19,6 @@ def main():
     time.sleep(interval)
 
     # Calculate wind direction based on ADC reading
-    #   Read ADC channel 0 with a gain of 2/3
-    #val = adc.read_adc(0, gain=2/3)
     val = adc.read_adc(0, gain=1)
     windDir = "Not Connected" # In case wind sensor not connected
     windDeg = 0

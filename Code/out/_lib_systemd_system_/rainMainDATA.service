@@ -1,0 +1,20 @@
+[Unit]
+Description=Sanders WeatherPi Rainfall Data Logger  rainMainDATA.service
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/home/YourUserName/out/rainMainDATA.py
+WorkingDirectory=/home/YourUserName/out/
+StandardOutput=syslog
+StandardError=syslog
+User=YourUserName
+Group=aGroupYouAreMemberOf(like'pi')
+#Group=pi
+#ExecStop = /bin/kill -2 $MAINPID
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

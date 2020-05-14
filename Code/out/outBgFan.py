@@ -98,7 +98,7 @@ def main():
     rpm = dataSet[3]
     logger.debug('Raw CPU: ' + ct.replace("\n","") + '. CPU: ' + cpuRtn +  '. Fan RPM: ' + str(rpm) + '. dc reset to ' + str(dc))
     if lastDc != dc and not argsBGF.debug:
-        logger.info('CPU tempC: ' + cpuRtn +  '. Fan RPM: ' + str(rpm) + '. dc reset to ' + str(dc))
+#        logger.info('CPU tempC: ' + cpuRtn +  '. Fan RPM: ' + str(rpm) + '. dc reset to ' + str(dc))
         pickle.dump(rpm, open(BGFHome + '/fanSpd.pkl', 'wb+'), pickle.HIGHEST_PROTOCOL)
     lastDc = dc
 #    pElapse = dataSet[1]

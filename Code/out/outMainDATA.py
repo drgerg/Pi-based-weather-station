@@ -17,7 +17,7 @@
 #    You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-import datetime,time,argparse,bme280,rainMain,windSpd,outFan,os,logging,signal,sys,statistics,mysql.connector,configparser,pickle
+import datetime,time,argparse,bme280,windSpd,os,subprocess,logging,signal,sys,statistics,mysql.connector,configparser,pickle
 import windDir as wDirection
 from time import sleep
 import RPi.GPIO as GPIO
@@ -45,9 +45,11 @@ windGustDir = 0
 rainRate = 0
 rain = 0
 extraTemp1 = 0 # CPU temp
-
-
-def datagrabber():  # Setup for Data Logging
+#
+##      Setup for Sensor Data Logging.  Each parameter gets logged for a minute
+##      then we run some stats, and share the output of that with the next step.
+#
+def datagrabber():
     start = time.time()
     accPress = []
     accTemp = []
@@ -57,15 +59,19 @@ def datagrabber():  # Setup for Data Logging
     accWspdM = []
     accWdir = []
     accWdeg = []
+    rain = 0
+    rainRate = 0
+    wetDry = 0
 
-    while time.time() - start < 60:
+    while time.time() - start < 60:                       ## The plan here is to run this for a minute,
+                                                          ## then get the median values to return.
         GPIO.setmode(GPIO.BCM)                            ## THIS BEGINS WIND SPEED ACQUISITION
         GPIO.setup(wsPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setwarnings(False)
         pstart = time.time()
         elapse = 0
         pulse = 0
-        while elapse < 2:                                 
+        while elapse < 2:
             pRtn = GPIO.wait_for_edge(16, GPIO.FALLING,timeout=1000)
             if pRtn != None:
                 pulse += 1
@@ -73,8 +79,28 @@ def datagrabber():  # Setup for Data Logging
         rps = pulse/elapse
         kph = '{:.2f}'.format(rps * 2.40114125)
         mph = '{:.2f}'.format(rps * 1.492)
-        outTemp,pressure,outHumidity,extraHumid1 = bme()  ## ACQUIRE TEMP,PRES,HUM 
+        outTemp,pressure,outHumidity,extraHumid1 = bme()  ## ACQUIRE TEMP,PRES,HUM
         wdir,wdeg = wDirection.main()                     ## ACQUIRE wdir (string) and wdeg (float) FROM windDir.py
+#                                                         ## ACQUIRE rain, rainRate from .pkl file (if exists)
+#                                                         ##   0.011" of rain causes one bucket-tip (1 pulse)
+        if os.path.exists(OMDHome + '/rainData.pkl'):     ## Check for .pkl file from rainMainDATA.py
+            rainData = pickle.load(open(OMDHome + '/rainData.pkl', 'rb'))
+            logger.debug('rainData variable was populated from rainData.pkl: ' + str(rainData))
+            os.remove(OMDHome + '/rainData.pkl')          ## delete the .pkl file after reading it.
+            logger.debug("rainData.pkl Pickle file erased.")
+            tips = 0
+            digVal = 0
+            wetDry = 1
+            for row in rainData:
+                tips = tips + row[0]
+                digVal = digVal + row[3]
+            wetDry = digVal / len(rainData)
+            rain = rain + (tips * 0.011)                           ## rain in the last minute
+            logger.debug('Calculated ' + str(rain) + ' inches from ' + str(tips) + ' tips from rainData.pkl.')
+            rainRate = (rain * 60) / len(rainData)                          ## rain variable times 60 gives us rain per hour
+        else:
+            logger.debug('rainData.pkl did not exist this time around.')
+            
         accPress.append(pressure)
         accTemp.append(outTemp)
         accHum.append(outHumidity)
@@ -84,15 +110,20 @@ def datagrabber():  # Setup for Data Logging
         accWdeg.append(wdeg)
         if argsOMD.debug:
             print(str(time.time() - start) + ': Wind Deg: ' + str(wdeg) + ' Wind Speed: ' + str(mph))
-    pressure = statistics.median(accPress)               ## Get the middle value in the list of values
-    outTemp = statistics.median(accTemp)                 ## accumulated over the last 60 seconds
+    loopTimer = time.time() - start
+    logger.debug('time.time() - start = ' + str(loopTimer))
+    pressure = statistics.median(accPress)                ## Get the middle value in the list of values
+    outTemp = statistics.median(accTemp)                  ## accumulated over the last 60 seconds
     outHumidity = statistics.median(accHum)
     extraHumid1 = statistics.median(accXhum)
     windSpeed = statistics.median(accWspdK)
     winddir = statistics.median(accWdeg)
-    wdirStr = wDirCvt(winddir)                          ## use the wDirCvt function to generate the string value for wind direction
-                                                        ## from the middle wind direction (in degrees) 
-    return pressure,outTemp,outHumidity,extraHumid1,windSpeed,winddir,wdirStr 
+    wdirStr = wDirCvt(winddir)                            ## use the wDirCvt function to generate the string value for wind direction
+#                                                         ## from the middle wind direction (in degrees) 
+    logger.debug('outMainData.py datagrabber() has run and is returning values to mydb().')
+    if rain > 0:
+        logger.info('Reporting ' + str(rain) + ' inches of rain.')
+    return pressure,outTemp,outHumidity,extraHumid1,windSpeed,winddir,wdirStr,rain,rainRate,wetDry
 #
 ##
 # 
@@ -188,12 +219,12 @@ def bme():
 def mydb():
     global pklData,numBadPings
     # Get current values from all the sensors.
-    pressure,outTemp,outHumidity,extraHumid1,windSpeed,winddir,wdirStr = datagrabber()
+    pressure,outTemp,outHumidity,extraHumid1,windSpeed,winddir,wdirStr,rain,rainRate,wetDry = datagrabber()
     # Get the vent fan RPM from the pickle file.
     fan1 = pickle.load(open(OMDHome + '/fanSpd.pkl', 'rb'))
     # Get the CPU temperature from the system.
     cpuT = cpuTemp()[1]
-    # Now make sure all the variables are of the right type.
+    # Now make sure all the variables are of the right type.  Take no chances.
     prs = float(pressure)
     otmp = float(outTemp)
     ohmd = float(outHumidity)
@@ -201,22 +232,17 @@ def mydb():
     wspd = float(windSpeed)
     wdir = float(winddir)
     wdirStr = wdirStr
+    if rain > 0:
+        rain = float(rain)
+        logger.debug('inside mydb(), rain is: ' + str(rain))
+    if rainRate > 0:
+        rainRate = float(rainRate)
     dtNow = int(time.time())
-    dataTable = []                                          ## Create a new blank list (dunno why I insist on calling these tables)
-    dataTable.append(dtNow)                                 # append all the variables one by one
-    dataTable.append(prs)
-    dataTable.append(otmp)
-    dataTable.append(ohmd)
-    dataTable.append(wspd)
-    dataTable.append(wdir)
-    dataTable.append(wdirStr)
-    dataTable.append(xohmd)
-    dataTable.append(cpuT)
-    dataTable.append(fan1)                                  # OK.  That's all our fresh data in one list.
+    dataTable = [dtNow,prs,otmp,ohmd,wspd,wdir,wdirStr,xohmd,cpuT,fan1,rain,rainRate,wetDry]  # Put all the readings into a list.
     if os.path.exists(OMDHome + '/allData.pkl'):            ## This .pkl file will exist if the upcoming ping test failed last time around.
         pklData = pickle.load(open(OMDHome + '/allData.pkl', 'rb'))
     pklData.append(dataTable)                               ## Merge the recent data with the .pkl file data just in case we are still offline
-    logger.debug('dataTable was appended to pklData')       
+    logger.debug('dataTable was appended to pklData')
     DBhost=config.get('mySQL','Address')                    # get the mySQL login data from our config file.
     DBuser=config.get('mySQL','User')
     DBpasswd=config.get('mySQL','Password')
@@ -224,7 +250,7 @@ def mydb():
     DBtable=config.get('mySQL','Table1')
     # Don't stop now . . . keep going!!!
     ## Check to see if we can ping the machine mySQL is running on
-    pingRes = os.system("ping -c 1 " + DBhost + " > /dev/null 2>&1")  ## Ping test to make sure the SQL machine is there.
+    pingRes = subprocess.call(['/bin/ping', '-c', '1', DBhost], stdout=subprocess.DEVNULL)  ## Ping test to make sure the SQL machine is there.
     logger.debug("Ping for server returned: " + str(pingRes))
     if pingRes == 0:                                        # We are connected.  Move ahead.  If not, don't do any of this stuff.
         if numBadPings > 0:
@@ -241,6 +267,9 @@ def mydb():
             xohmd = row[7]
             cpuT = row[8]
             fan1 = row[9]
+            rain = row[10]
+            rainRate = row[11]
+            wetDry = row[12]
             try:
                 # prepare the database connector 
                 mydb = mysql.connector.connect(
@@ -249,14 +278,14 @@ def mydb():
                     passwd=DBpasswd,
                     database=DBdatabase
                 )
-                cursor = mydb.cursor()
-                cursor.execute("select database();")
-                record = cursor.fetchone()
+                cursor = mydb.cursor()                      # Attempt a connection with the remote database. If it is not there, 
+                cursor.execute("select database();")        # an exception will be logged and we will save our data for the 
+                record = cursor.fetchone()                  # next go-round.
                 logger.debug("Got the database: " + str(record))
                 addRecord = ('INSERT INTO ' + DBdatabase + '.' + DBtable + '' \
-                    ' (dateTime,pressure,outTemp,outHumidity,windSpeed,winddir,wdirStr,extraHumid1,cpuTemp,fan1)' \
-                    ' VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)')
-                addData = (dtNow,prs,otmp,ohmd,wspd,wdir,wdirStr,xohmd,cpuT,fan1)
+                    ' (dateTime,pressure,outTemp,outHumidity,windSpeed,winddir,wdirStr,extraHumid1,cpuTemp,fan1,rain,rainRate,wetDry)' \
+                    ' VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)')
+                addData = (dtNow,prs,otmp,ohmd,wspd,wdir,wdirStr,xohmd,cpuT,fan1,rain,rainRate,wetDry)
                 logger.debug(addRecord %addData)
                 cursor.execute(addRecord,addData)
                 cursor.execute("SELECT * FROM " + DBdatabase + '.' + DBtable + " where id=(select max(id) from " + DBdatabase + '.' + DBtable + ")")
@@ -265,12 +294,12 @@ def mydb():
                 mydb.commit()
                 cursor.close()
                 mydb.close()
-                pklData = []
+                pklData = []                                ## RESET pklData to an empty list.
                 if os.path.exists(OMDHome + '/allData.pkl'):
                     os.remove(OMDHome + '/allData.pkl')
-                    logger.debug("Pickle file erased.")
+                    logger.debug("allData.pkl Pickle file erased.")
             except Exception:
-                logger.info('Fatal Error in mydb()', exc_info=True)
+                logger.info('Unable to connect with mySQL database.  Details to follow: ', exc_info=True)
                 pass
             funNStr = sys._getframe().f_code.co_name
             logger.debug("Finished the " + funNStr + " function")
@@ -280,38 +309,14 @@ def mydb():
         pickle.dump(pklData, open(OMDHome + '/allData.pkl', 'wb+'), pickle.HIGHEST_PROTOCOL)
         logger.debug("allData.pkl updated.")
         logger.info ("Number of bad pings is: " + str(numBadPings) + ".")
+        if numBadPings >= 3:
+            logger.info("Too many bad pings.  Setting up to reboot.")
+            os.mknod(OMDHome + '/rebootItNow')
+
+
+
 #
 ##  END OF WRITE-TO-DATABASE FUNCTION
-#
-def windSpd():
-    
-    pulse,elapse,start = windSpd.wsPulse()
-    if elapse !=0:
-        rps = pulse/elapse
-        kph = '{:.2f}'.format(rps * 2.40114125)
-        mph = '{:.2f}'.format(rps * 1.492)
-        tNow = time.time()
-        if tNow - start > 15:
-            kph = 0
-            mph = 0
-    print('Wind Speed: ' + str(mph))
-    return kph,mph
-# 1 Hz (rev/sec) = 1.492 mph = 2.40114125 kph = 2401.1 m/h
-#
-def rainFall():
-#    print('RainFall')
-    global rpulse,relapse,rstart
-#    rpulse,relapse,rstart = rainMain.rPulse()
-    if rpulse == 0:
-        inHr = '0'
-    if rpulse == 1:
-        inHr = 'Trace'
-    if rpulse > 1:
-        inHr = str('{:2f}'.format(rpulse*.011)/(relapse/360))
-    return inHr
-
-
-
 #
 ## Grab the CPU temperature while you're at it.
 #
@@ -321,23 +326,22 @@ def cpuTemp():
     cpuRtn = ct.replace("temp=","").replace("'C\n","")
     cpuT1=float(cpuRtn)
     cpuT2=float(9/5 * cpuT1 + 32.00)
-#    cpuT = "CPU: " + str(temp1) + "C" + " (" + str(temp2) + "F)"
-    #logger.debug(cpuTemp)
-    #functionNameAsString = sys._getframe().f_code.co_name
-    #logger.debug("Finished the " + functionNameAsString + " function")
     return cpuT1,cpuT2
-
+#
+## = = = = = = = =  END OF WEATHER CODE - START OF ERROR HANDLING, LOGGING AND WRAPUP CODE  = = = = = = = = =
+#
 def SignalHandler(signal, frame):
         if signal == 2:
             sigStr = 'CTRL-C'
             logger.info('* * * ' + sigStr + ' caught. * * * ')
         print("SignalHandler invoked")
         logger.info("Cleaning up")
+        GPIO.cleanup()
         logger.info("Shutting down gracefully")
         logger.debug("Wrote to log in SignalHandler")
         logger.info("Finished SignalHandler")
         logger.info("That's all folks.  Goodbye")
-        logger.info(" - - - - DATA LOGGING STOPPED INTENTIONALLY - - - - ")
+        logger.info(" - - - - outMainDATA.py DATA LOGGING STOPPED INTENTIONALLY - - - - ")
         sys.exit(0)
 
 if __name__ == "__main__":
@@ -361,26 +365,26 @@ if __name__ == "__main__":
     else:
         logging.basicConfig(filename=OMDHome + '/outMain.log', format='%(asctime)s - %(message)s', datefmt='%a, %d %b %Y %H:%M:%S', level=logging.INFO)
     #
-    logger.info(" - - - - DATA LOGGING STARTED - - - - ")
+    logger.info(" - - - - outMainDATA.py DATA LOGGING STARTED - - - - ")
     logger.info("  INITIAL CONFIGURATION COMPLETE  ")
     logger.info("'HOME' path is: " + OMDHome)
     #
-    ## END Args parsing 
+    ## END Args parsing and logging setup.
     #
     import traceback
     try:
         signal.signal(signal.SIGINT, SignalHandler)  ## This one catches CTRL-C from the local keyboard
         signal.signal(signal.SIGTERM, SignalHandler) ## This one catches the Terminate signal from the system
-        logger.info(" Top of try")
+        logger.debug(" Top of try")
         while True:
             mydb()
         pass
 
-        logger.info("Bottom of try")
+        logger.debug("Bottom of try")
 #            logger.flush()
     except Exception:
         logger.info("Exception caught at bottom of try.", exc_info=True)
         error = traceback.print_exc()
         logger.info(error)
         logger.info("That's all folks.  Goodbye")
-        logger.info(" - - - - DATA LOGGING STOPPED BY EXCEPTION - - - - ")
+        logger.info(" - - - - outMainDATA.py DATA LOGGING STOPPED BY EXCEPTION - - - - ")

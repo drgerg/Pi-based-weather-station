@@ -1,0 +1,19 @@
+[Unit]
+Description=Sanders Outdoor Conditions Cam  camStream.service
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/home/YourUserName/out/camStream.py
+WorkingDirectory=/home/YourUserName/out/
+StandardOutput=syslog
+StandardError=syslog
+#User=YourUserName
+#Group=pi
+#ExecStop = /bin/kill -2 $MAINPID
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
