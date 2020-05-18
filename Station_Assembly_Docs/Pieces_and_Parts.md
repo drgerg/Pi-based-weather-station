@@ -1,6 +1,6 @@
 # Pieces and Parts: Things you can get that make life easier
 
-Getting the hardware part of this project together is not a trivial task.  I am hoping after a year of use I will be able to say it was worth it.
+Getting the hardware part of this project together is not a trivial task.  I am hoping after a year of use I will be able to say it was worth it. (That's how long each of the two Accurite stations lasted.  Pathetic.)
 
 **Be sure to look at the Station_Parts_List.pdf** located in the Component_Docs folder.  That's where I list the major parts that make up the weather station.
 
