@@ -1,4 +1,4 @@
-# Today's Code is Rudimentary - understand that.
+# Today's Code is Rudimentary - understand that
 
 This file is here out of respect for anyone who has ventured here and is actually interested.
 
@@ -15,8 +15,9 @@ Getting the hardware put together is not a trivial process, so the code I have i
 03-28-2020 - In spite of the fact that my code is still VERY trashy, it is working as I intended, and for that reason I'm going ahead and putting it up here.  
 05/13/2020 - Things are getting a bit less trashy.  It's a slow process.  I have a day job.
 
-# Necessary files from the 'out' directory.  
-## These are the basis of the system:
+## Necessary files from the 'out' directory
+
+### These are the basis of the system
 
 - bme280.py - module that gets data from the temperature, humidity, pressure sensor.
 - outMainDATA.py - this is the core of the data gathering system. It is run by outMainDATA.service at boot.
@@ -28,12 +29,12 @@ Getting the hardware put together is not a trivial process, so the code I have i
 - windDir.py - just like the name says, gets the wind direction. Loaded as a module in outMainDATA.py.
 - windSpd.py - counts pulses and calculates the wind speed. Loaded as a module in outMainDATA.py.
 
-# Accessory utility files
+## Accessory utility files
 
 - gpio-tool.py - provides a little useful info about the Pi it's running on.
 - z-sysRunTest.py - quickly shows you an OK or NOT OK status of the *.system files.
 
-# Inside the _lib_systemd_system_ folder:
+## Inside the _lib_systemd_system_ folder
 
 These files live in /lib/systemd/system and are owned by root:root .  Just copying them there is not enough.  You need to edit them to
 get your own system's data in them first, Then there are proper steps you need to follow to use them.
