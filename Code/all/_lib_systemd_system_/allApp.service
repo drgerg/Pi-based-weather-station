@@ -4,12 +4,12 @@ After=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/gunicorn --bind=unix:/home/greg/all/gunicorn.sock --threads=8 allApp:app
-WorkingDirectory=/home/greg/all/
+ExecStart=/usr/local/bin/gunicorn --bind=unix:/home/YourUser/all/gunicorn.sock --threads=8 allApp:app
+WorkingDirectory=/home/YourUser/all/       <--- Make sure you change these to match your system
 StandardOutput=syslog
 StandardError=syslog
-User=greg
-Group=www-data
+User=YourUserNameGoesHere
+Group=www-data(or whatever group you think it best)
 #ExecStop = /bin/kill -2 $MAINPID
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID

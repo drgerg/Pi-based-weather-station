@@ -4,12 +4,12 @@ After=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/home/greg/all/allPWSWeather.py
-WorkingDirectory=/home/greg/all/
+ExecStart=/home/YourUser/all/allPWSWeather.py    <--- Make sure you change this to match your system
+WorkingDirectory=/home/YourUser/all/         <--- Make sure you change this to match your system
 StandardOutput=syslog
 StandardError=syslog
-User=greg
-Group=greg
+User=YourUserNameGoesHere
+Group=YourUserGroupGoesHere
 #ExecStop = /bin/kill -2 $MAINPID
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID
