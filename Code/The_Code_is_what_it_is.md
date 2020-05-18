@@ -48,4 +48,4 @@ get your own system's data in them first, Then there are proper steps you need t
 
 ## Information on files in the 'all' directory
 
-![Output as seen in browser.](./all/allApp.py_Browser_output.png)
+![Output as seen in browser.](./all/allApp_Browser_output.png)
