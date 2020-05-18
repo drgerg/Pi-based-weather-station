@@ -45,3 +45,7 @@ get your own system's data in them first, Then there are proper steps you need t
 - outWPBoot.service - starts the connnectivity monitor on boot.
 - rainMainDATA.service - starts collecting rainfall data on boot.
 - outSocket.service - runs a socket to allow for simple local diagnosics.
+
+## Information on files in the 'all' directory
+
+![Output as seen in browser.](../Code/all/allApp.py_Browser_output.png)
