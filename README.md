@@ -33,7 +33,7 @@ The goal of this project is to take advantage of the availability of the modular
 
 The project is written in Python 3.
 
-I don't try to make this system available to the Internet.  It is intended to be viewed and used locally, or by means of a VPN. I do upload data to [PWS site](https://www.pwsweather.com/), which works really well.
+I don't try to make this system available to the Internet.  It is intended to be viewed and used locally, or by means of a VPN. I do upload data to [PWSWeather.com](https://www.pwsweather.com/), which works really well.
 
 I am making every attempt to provide enough documentation and schematics for anyone else to duplicate what I've done.
 
