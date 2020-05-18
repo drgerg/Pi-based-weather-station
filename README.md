@@ -31,7 +31,9 @@ After throwing away my second Acurite weather station in only two years I decide
 
 The goal of this project is to take advantage of the availability of the modular Pi and Arduino sensors and boards to create a weather station that I could repair when something died.  The Pi lives on the pole with the sensors, and communicates over WiFi.
 
-The project is being written in Python 3. Everything stays here, this is not ever going to be on the web, although I do upload data to a [PWS site](https://www.pwsweather.com/).
+The project is written in Python 3.
+
+I don't try to make this system available to the Internet.  It is intended to be viewed and used locally, or by means of a VPN. I do upload data to [PWS site](https://www.pwsweather.com/), which works really well.
 
 I am making every attempt to provide enough documentation and schematics for anyone else to duplicate what I've done.
 
