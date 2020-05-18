@@ -11,11 +11,11 @@ This project is not an easy one, but if I can build it, so can other people.
 Here's what's where:  (remember: this is all in progress still)
 
 - **Code**: contains the Python3 code in the 'out' folder as well as the 'all' folder, which contains code for the mySQL server and browser front-end.  This folder also contains 'The_Code_is_what_it_is.md' which provides more detail on all that.
-- **Component_Docs**: contains collected documentation for the various hardware pieces of the station.  The Station_Parts_List.xlsx is there.
+- **Component_Docs**: contains collected documentation for the various hardware pieces of the station.  The Station_Parts_List.pdf is there.
 - **Pics**: contains pictures of the pieces and parts (640x480).  Contact me if you want higher resolution pics.
 - **SKP_STL**: contains the Sketchup and stereolithography files for the 3D printed parts I designed for this project.
 - **Station_Assembly_Docs**: contains documents pertaining to the actual assembly of the station.
-  - **There are no step-by-step instructions there.**  But there is a [block diagram](./Station_Assembly_Docs/System_Block_Diagram.pdf) and a [schematic diagram](./Station_Assembly_Docs/WeatherPi_System_Schematic-V1.2.pdf).
+  - **There are no step-by-step instructions there.**  But there is a [block diagram](./Station_Assembly_Docs/System_Block_Diagram.pdf) and a [schematic diagram](./Station_Assembly_Docs/WeatherPi_System_Schematic-V1.2.pdf).  And don't forget the Station_Parts_List.pdf in Component Docs.
 
 This is not a quick-and-easy project.  The station is powered by a remote 12VDC power supply with a battery backup.  I dug a trench, put PVC conduit in it, and pulled 14AWG Romex into it.  It's a good solution.  I drove ground rods and put in-line lighting/surge protectors on both ends of that power run.  I used a power supply made for controlled access doors.  A benefit of doing that is it has a timed relay built in.  By routing the 12V output of the supply through that relay, I have a way to remotely power-cycle (reboot) the station.  This has been VERY handy during this development stage.
 
@@ -23,7 +23,7 @@ The whole Weather Station package is really two computers (and interfaces with t
 
 No guarantees are made. None. That is normal in projects such as this.
 
-I do not **yet** have a complete parts list for you.  Nor do I have step-by-step instructions.  I'm just a guy, not a foundation. I love to make things that work, and I like to share them with others who might benefit from a bit of data I happen to share.
+I have a pretty complete parts list and the aforementioned block diagram and wiring schematic available in the repo here.
 
 ### A bit of History
 
