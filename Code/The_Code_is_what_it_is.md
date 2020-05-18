@@ -6,14 +6,13 @@ This code is a touch rough.  But it works and does exactly what I wanted it to d
 
 The Pi is talking to the mySQL machine, which in turn is talking to [www.pwsweather.com](https://www.pwsweather.com/station/pws/kflmilto35).  It's pretty cool to see the data there.
 
-There are two folders in the Code repo folder: the **All** folder and the **Out** folder.
+There are two folders in the Code repo folder: the **All** folder and the **Out** folder.  The **Out** folder contains code for the WeatherPi (RRRRPWS).  The **all** folder contains code that runs on a Linux box inside the house.  That computer runs mySQL, and the Python/Flask/Gunicorn/nginx browser interface for the whole shooting match.
 
-There's also the question of all the prerequisites for getting all this running, and that will require a bit of time writing and editing.  Nearly all of them are covered in the Pool Controls project.  I'm using the same sort of Python, Flask, Gunicorn, nginx setup for this project that I used for that one.
-
-Getting the hardware put together is not a trivial process, so the code I have is quite rudimentary (almost embarrassingly so).
+There is the question of all the prerequisites for getting all this running, and that requires a bit of writing and editing I haven't done yet.  However, nearly all of those prerequisites are covered in the Pool Controls project. [link](https://github.com/casspop/PoolControls/blob/master/Setup%20nginx%20and%20gunicorn.md)  I'm using the same sort of Python, Flask, Gunicorn, nginx setup for this project that I used for that one.
 
 03-28-2020 - In spite of the fact that my code is still VERY trashy, it is working as I intended, and for that reason I'm going ahead and putting it up here.  
 05/13/2020 - Things are getting a bit less trashy.  It's a slow process.  I have a day job.
+05/17/2020 - Actually, now I'm feeling pretty good about this.  The weather station is chugging along happily.  I've added some long-awaited touches to my interface, which makes me feel good.
 
 ## Necessary files from the 'out' directory
 
@@ -45,3 +44,4 @@ get your own system's data in them first, Then there are proper steps you need t
 - outMainDATA.service - starts the main routines on boot.
 - outWPBoot.service - starts the connnectivity monitor on boot.
 - rainMainDATA.service - starts collecting rainfall data on boot.
+- outSocket.service - runs a socket to allow for simple local diagnosics.
