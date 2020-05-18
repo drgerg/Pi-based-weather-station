@@ -2,9 +2,11 @@
 
 This file is here out of respect for anyone who has ventured here and is actually interested.
 
-This code is really rough.  But it works and does exactly what I wanted it to do.  So, in that respect, it's perfect. 
+This code is a touch rough.  But it works and does exactly what I wanted it to do.  So, in that respect, it's perfect. 
 
 The Pi is talking to the mySQL machine, which in turn is talking to [www.pwsweather.com](https://www.pwsweather.com/station/pws/kflmilto35).  It's pretty cool to see the data there.
+
+There are two folders in the Code repo folder: the *All* folder and the *Out* folder
 
 There's also the question of all the prerequisites for getting all this running, and that will require a bit of time writing and editing.  Nearly all of them are covered in the Pool Controls project.  I'm using the same sort of Python, Flask, Gunicorn, nginx setup for this project that I used for that one.
 
