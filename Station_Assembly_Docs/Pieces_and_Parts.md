@@ -19,9 +19,3 @@ I have collected a few assortments of carefully curated odd things, the majority
 I listed these parts because having a stock of this stuff saves me a lot of time and results in a finished product that works well and one I'm not ashamed to show people.  If you can afford to do so, I highly recommend you stock your hobby locker with these sorts of parts and pieces.
 
 * [5VDC 4-wire cooling fan](https://www.amazon.com/BSB05505HP-BASA5508R5H-0-40A-5-5-Cooling/dp/B01JEDTE5K) - The cooling fan I used was one I had scavenged from a dead laptop.  As of 4/28/20 this fan, which is similar but not exactly the same, is available for $14 at Amazon. It is a replacement fan for a Lenovo NUC or laptop.  I'm putting this in here just to give anyone who cares a place to start.
-
-# Random Notes Toward a Better Repository
-
-Two systemctl .service files:  outCam.service, outMainDATA.service
-
-Those files are located in /lib/systemd/system/ 
