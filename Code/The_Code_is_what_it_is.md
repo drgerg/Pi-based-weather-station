@@ -49,6 +49,7 @@ get your own system's data in them first, Then there are proper steps you need t
 ## Information on files in the 'all' directory
 
 ![Output as seen in browser.](./all/allApp_Browser_output.png)
+
 In a desktop browser or on my phone, this is the screen I go to first when I want to interact with my pool controls, my security cameras, or the RRRRPWS (WeatherPi).
 
 Here are the files that live on the little Intel i3 Lenovo in my office.  I did this to take as much processing pressure off of the Raspberry Pi as possible.  I want all of its resources to be focused on gathering data from the sensors, collating it and delivering it to this little guy.  He can take it from there.
