@@ -1,0 +1,19 @@
+[Unit]
+Description=Sanders central controls  allApp.service
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/gunicorn --bind=unix:/home/greg/all/gunicorn.sock --threads=8 allApp:app
+WorkingDirectory=/home/greg/all/
+StandardOutput=syslog
+StandardError=syslog
+User=greg
+Group=www-data
+#ExecStop = /bin/kill -2 $MAINPID
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
