@@ -3,13 +3,13 @@ Project Initialized October 2019.
 Project opened to public on Github February 2020.
 ![RRRRPWS on the pole.](./Pics/RRRRPWS-on-the-pole.jpg)  ![Output as seen in browser.](./Pics/Output-to-browser.jpg)
 
-My station is up and running.  It works.  I get good, accurate, stable readings for temperature, pressure, humidity, wind speed, wind direction and rainfall. 
+My station is up and running.  It works.  I get good, accurate, stable readings for temperature, pressure, humidity, wind speed, wind direction and rainfall. I interact with my system by means of a web browser on my desktop or phone.
 
 This project is not an easy one, but if I can build it, so can other people.
 
 Here's what's where:  (remember: this is all in progress still)
 
-- **Code**: contains the Python3 code in the 'out' folder.  Also contains 'The_Code_is_what_it_is.md' which provides some details on the soft side of the project.
+- **Code**: contains the Python3 code in the 'out' folder as well as the 'all' folder, which contains code for the mySQL server and browser front-end.  This folder also contains 'The_Code_is_what_it_is.md' which provides more detail on all that.
 - **Component_Docs**: contains collected documentation for the various hardware pieces of the station.  The Station_Parts_List.xlsx is there.
 - **Pics**: contains pictures of the pieces and parts (640x480).  Contact me if you want higher resolution pics.
 - **SKP_STL**: contains the Sketchup and stereolithography files for the 3D printed parts I designed for this project.
