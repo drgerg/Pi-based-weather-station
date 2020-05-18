@@ -1,4 +1,4 @@
-# The Quest for a Reliable, Robust, Repairable Raspberry Pi-based Weather Station
+# The Quest for a Reliable, Robust, Repairable Raspberry Pi-based Weather Station (As built: c.$470.00)
 
 Project Initialized October 2019.
 Project opened to public on Github February 2020.
