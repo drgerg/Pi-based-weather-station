@@ -13,17 +13,21 @@ import time,os,logging,configparser,argparse,traceback,signal,sys
 #     allPWS.service - Pulls weather data from mySQL, formats it and sends it to PWSWeather.com for display.
 #
 def main():
-    list = ['allApp.service','allPWS.service']
-    for item in list:
+    result = []
+    svcList = ['allApp.service','allPWS.service']
+    for item in svcList:
         status = os.system('systemctl is-active --quiet ' + item)
         if status == 0:
             strStat = 'OK'
         else:
             strStat = 'NOT OK'
-        print('{:>14s} {:<22s}'.format(strStat + ' :', item))
-        logger.info('{:>14s} {:<22s}'.format(strStat + ' :', item))
-    logger.info(' End of Report ')
-
+        ret = '{:>14s} {:<22s}'.format(strStat + ' :', item)
+        bLen = str(len(svcList))
+        print(ret)
+        #logger.info(ret)
+        result.append(ret)
+    #logger.info(' End of Report ')
+    return bLen,result
 ## - - - - - - END TEST CODE - - - - - - - 
 #
 

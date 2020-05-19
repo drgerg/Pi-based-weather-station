@@ -33,7 +33,7 @@ rpulse = 0
 #rstart = time.time()
 gppulse = 0
 gpstart = 0
-relapse = 0            # This is r-elapse, although it looks like 'relapse', like someone fell off the wagon.
+timeVal = 0            
 #                      # ('r' is for 'rain'.  rpulse is "rain pulse", rstart is "rain start", get it?)
 ##  STARTING HERE WE ARE GETTING THE BUCKET TIP DATA READY FOR outMainDATA TO PICK IT UP AS IT GOES BY.
 ##  WE COLLECT IT, STACK IT UP FOR 60 SECONDS, AND LEAVE IT LAYING IN THE WORKING FOLDER IN A .pkl FILE.
@@ -45,7 +45,7 @@ rainList = []
 def gotPulse(channel):
     # 0.011" of rain causes one bucket-tip (1 pulse)
     global gppulse,gpstart
-    gppulse = 1
+    gppulse =+ 1
     gpstart = time.time()
     logger.info('Got a pulse.')
     return gppulse,gpstart
@@ -67,36 +67,34 @@ def main():
         rainList = []
         cntCycle = time.time()
         # logger.info(int(cntCycle))
-
-        while time.time() - cntCycle < 60:
-
-            # logger.info('rainMainDATA main() while loop starts.')
-            relapse = int(time.time() - cntCycle)
-            logger.debug('cycle = ' + str(relapse) + ': pulse = ' + str(rpulse))
+# Part I
+        while time.time() - cntCycle < 58:
+            timeVal = time.time()
             digVal = GPIO.input(24)
-            if gppulse == 1:
-                rpulse = 1
+            if gppulse >= 1:
+                rpulse = gppulse
             else:
                 rpulse = 0
-                gpstart = cntCycle
-            iterList = [rpulse,relapse,gpstart,digVal]
+                gpstart=time.time()
+            iterList = [rpulse,timeVal,gpstart,digVal]
             gppulse = 0
             gpstart = 0
-            rainList.append(iterList)
-            sleep(2)
-        else:
-            if os.path.exists(RMDHome + '/rainData.pkl'):     ## Check for .pkl file from rainMainDATA.py
-                rainDataList = pickle.load(open(RMDHome + '/rainData.pkl', 'rb'))
-                # logger.info('rainDataList variable was populated from rainData.pkl: ')
-                os.remove(RMDHome + '/rainData.pkl')          ## delete the .pkl file after reading it.
+            rainList.append(iterList)                                               ## add the most recent data to rainList.
+            sleep(1)
+        else:                                                                       ## After the 60 seconds (give or take) passes, do part II.
+#  Part II
+            if os.path.exists(RMDHome + '/rainData.pkl'):                           ## Check for .pkl file. One would exist if there had been network issues.
+                rainDataList = pickle.load(open(RMDHome + '/rainData.pkl', 'rb'))   ## Read the .pkl file contents into rainDataList.
+                logger.info('rainDataList variable was populated from rainData.pkl: ')
+                os.remove(RMDHome + '/rainData.pkl')                                ## delete the .pkl file after reading it.
                 # logger.info("rainData.pkl Pickle file erased.")
-                for row in rainList:
+                for row in rainList:                                                ## Append the contents of the new rainList to rainDataList.
                     rainDataList.append(row)
-                # logger.info('Appended iterList to rainList.')
+                # logger.info('Appended rainList to rainDataList.')
             else:
                 # logger.info('Saving rainList to rainData.pkl.')
-                rainDataList = rainList
-        pickle.dump(rainDataList, open(RMDHome + '/rainData.pkl', 'wb+'), pickle.HIGHEST_PROTOCOL) ## Save what we got to the .pkl file for outMainDATA.py.
+                rainDataList = rainList                                             ## if there wasn't a .pkl file, make rainDataList from rainList and move on.
+        pickle.dump(rainDataList, open(RMDHome + '/rainData.pkl', 'wb+'), pickle.HIGHEST_PROTOCOL) ## Save rainDataList to the .pkl file for outMainDATA.py.
         logger.debug('rainDataList is '+ str(len(rainDataList)) + " records long and was was saved in rainData.pkl.")
         rainList = []
         rainDataList = []

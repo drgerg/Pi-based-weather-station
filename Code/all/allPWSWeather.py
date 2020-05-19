@@ -35,35 +35,48 @@ config.read(PWSHome + '/allApp.conf')
 # recTime,pressure,outTemp,outTempC,outHumidity,windSpeed,winddir,wdirStr,extraHumid1,cpuTemp,recNum,fan1,rawRecTime
 
 def main():
+    global lastRecTime
+    if lastRecTime == None:
+        if os.path.isfile(PWSHome + '/LastRecTime.pkl'):
+            lastRecTime = pickle.load(open(PWSHome + '/LastRecTime.pkl', 'rb'))
+        else:
+            lastRecTime = 0
     outData = allGetSQL.dataGrab()
-#    inchRain = allGetSQL.inchRainGrab() - THIS IS NOT HOW WE WANT TO DO THIS.  ONLY THE LAST RECORD, NOT SINCE MIDNIGHT
-    recTime = outData[0]
-    pressure = outData[1]
-    pressNA = "{:.2f}".format(0.0295300 * pressure)
-    outTemp = "{:.1f}".format(outData[2])
-    outHumidity = str(outData[4])
-    windSpeed = "{:.1f}".format(outData[5])
-    winddir = str(outData[6])
-    rawRecTime = outData[12]
-    rain = str(outData[13])
-#    logger.info(rain)
-    url = config.get('PWS_Service','Service_URL')
-    PID = config.get('PWS_Service','PWSID')
-    PPW = config.get('PWS_Service','PWSPassword')
-    softwaretype = 'custom_python'
-    recordTime = time.strftime("%Y-%m-%d+%H:%M:%S",time.gmtime(rawRecTime))
-    data_string = str(url+'?ID='+PID+'&PASSWORD='+PPW+'&dateutc='+recordTime+'&winddir='+winddir+'&windspeedmph='+windSpeed+'&tempf='+outTemp+'&baromin='+pressNA+'&humidity='+outHumidity+'&rainin='+rain+'&softwaretype='+softwaretype+'&action=updateraw')
-#    data_string = str(url+'?ID='+PID+'&PASSWORD='+PPW+'&dateutc='+recordTime+'&winddir='+winddir+'&windspeedmph='+windSpeed+'&tempf='+outTemp+'&baromin='+pressNA+'&humidity='+outHumidity+'&softwaretype='+softwaretype+'&action=updateraw')
-    try:
-        with request.urlopen(data_string) as response:
-            gotBack = response.read()
-            #logger.info(gotBack)
-    except urllib.error.URLError as e: 
-        ResponseData = e.reason
-        logger.info('Error: ' + str(ResponseData))
-        pass
-    finally:
-        sleep(70)
+    rawrectime = outData[12]
+    if rawrectime > lastRecTime:
+#        logger.info('This record is new: ' + str(rawrectime))
+        recTime = outData[0]
+        pressure = outData[1]
+        pressNA = "{:.2f}".format(0.0295300 * pressure)
+        outTemp = "{:.1f}".format(outData[2])
+        outHumidity = str(outData[4])
+        windSpeed = "{:.1f}".format(outData[5])
+        winddir = str(outData[6])
+        rawRecTime = outData[12]
+        rain = str(outData[13])
+#        logger.info(rain)
+        url = config.get('PWS_Service','Service_URL')
+        PID = config.get('PWS_Service','PWSID')
+        PPW = config.get('PWS_Service','PWSPassword')
+        softwaretype = 'custom_python'
+        recordTime = time.strftime("%Y-%m-%d+%H:%M:%S",time.gmtime(rawRecTime))
+        data_string = str(url+'?ID='+PID+'&PASSWORD='+PPW+'&dateutc='+recordTime+'&winddir='+winddir+'&windspeedmph='+windSpeed+'&tempf='+outTemp+'&baromin='+pressNA+'&humidity='+outHumidity+'&rainin='+rain+'&softwaretype='+softwaretype+'&action=updateraw')
+        #data_string = str(url+'?ID='+PID+'&PASSWORD='+PPW+'&dateutc='+recordTime+'&winddir='+winddir+'&windspeedmph='+windSpeed+'&tempf='+outTemp+'&baromin='+pressNA+'&humidity='+outHumidity+'&softwaretype='+softwaretype+'&action=updateraw')
+        try:
+            with request.urlopen(data_string) as response:
+                gotBack = response.read()
+                if b'posted' in gotBack:
+                    resp = 'Data logged and posted.'
+                else:
+                    resp = 'Data NOT logged and posted.'
+#                logger.info(resp)
+        except urllib.error.URLError as e: 
+            ResponseData = e.reason
+            logger.info('Error: ' + str(ResponseData))
+            pass
+        lastRecTime = rawrectime
+    pickle.dump(lastRecTime, open(PWSHome + '/LastRecTime.pkl', 'wb+'), pickle.HIGHEST_PROTOCOL)
+    sleep(10)
 #
 ## = = = = = = = =  END OF MAIN CODE - START OF ERROR HANDLING, LOGGING AND WRAPUP CODE  = = = = = = = = =
 #
@@ -106,6 +119,7 @@ if __name__ == "__main__":
     signal.signal(signal.SIGTERM, SignalHandler) ## This one catches the Terminate signal from the system    
     try:
 #        print(" Top of try")
+        lastRecTime = None
         while True:
             main()
         #main()

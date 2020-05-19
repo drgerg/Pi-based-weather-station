@@ -21,7 +21,7 @@
 #
 
 
-import os, pickle, re, time, datetime, requests, subprocess, configparser, signal, socket, random, allGetSQL
+import os, pickle, re, time, datetime, requests, subprocess, configparser, signal, socket, random, allGetSQL, zsysRunTest
 from time import sleep
 from collections import OrderedDict
 from flask import Flask, render_template, request, flash, url_for
@@ -29,6 +29,7 @@ from flask_wtf import FlaskForm
 from wtforms import TextField, TextAreaField, BooleanField, StringField, IntegerField, SubmitField, validators
 from wtforms.validators import Length, DataRequired, NumberRange
 from user_agents import parse
+#from zsysRunTest import main
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -352,9 +353,14 @@ def stats():
                 pass                                                # It's all good, so wrap things up.
         else:                                                       # A 'just in case' check . . . not sure if it's needed.
             s.sendall(b'quit')                                      # last-ditch effort to quit smoothly. May be a waste.
+## above was for WeatherPi, below is for Brilliant (the mySQL computer)
+        bLen,result = zsysRunTest.main()
+# This Templatedata section still belongs to the stats() function.
     templateData = {                                                # Create the templateData dictionary.
       'listLen' : listLen,                                          # Add our 'how many items are there' entry
-      'statResp' : statusResp                                       # Add our raw data from the remote machine.
+      'statResp' : statusResp,                                      # Add our raw data from the remote machine.
+      'bLen' : bLen,
+      'result' : result                                             # Add results from the local machine too.
       }
     return render_template('stats.html', **templateData)            # Return all this goodness and render stats.html using it.
     

@@ -28,7 +28,7 @@ rps = 0
 kph = 0
 mph = 0
 rpulse = 0
-relapse = 0
+timeVal = 0
 rstart = 0
 accResults = []
 pklData = []
@@ -50,6 +50,7 @@ extraTemp1 = 0 # CPU temp
 ##      then we run some stats, and share the output of that with the next step.
 #
 def datagrabber():
+    global timeVal
     start = time.time()
     accPress = []
     accTemp = []
@@ -63,7 +64,7 @@ def datagrabber():
     rainRate = 0
     wetDry = 0
 
-    while time.time() - start < 60:                       ## The plan here is to run this for a minute,
+    while time.time() - start < 57:                       ## The plan here is to run this for a minute,
                                                           ## then get the median values to return.
         GPIO.setmode(GPIO.BCM)                            ## THIS BEGINS WIND SPEED ACQUISITION
         GPIO.setup(wsPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -93,10 +94,14 @@ def datagrabber():
             wetDry = 1
             for row in rainData:
                 tips = tips + row[0]
+                timeVal = row[1]
                 digVal = digVal + row[3]
             wetDry = digVal / len(rainData)
             rain = rain + (tips * 0.011)                           ## rain in the last minute
             logger.debug('Calculated ' + str(rain) + ' inches from ' + str(tips) + ' tips from rainData.pkl.')
+            logger.info('The rainData list has ' + str(len(rainData)) + ' records in it.')
+            bench1 = time.time() - timeVal
+            logger.info('It took ' + str(bench1) + ' seconds from last tick check to read the rainData.pkl file.')
             rainRate = (rain * 60) / len(rainData)                          ## rain variable times 60 gives us rain per hour
         else:
             logger.debug('rainData.pkl did not exist this time around.')
@@ -123,7 +128,7 @@ def datagrabber():
     logger.debug('outMainData.py datagrabber() has run and is returning values to mydb().')
     if rain > 0:
         logger.info('Reporting ' + str(rain) + ' inches of rain.')
-    return pressure,outTemp,outHumidity,extraHumid1,windSpeed,winddir,wdirStr,rain,rainRate,wetDry
+    return pressure,outTemp,outHumidity,extraHumid1,windSpeed,winddir,wdirStr,rain,rainRate,wetDry,timeVal
 #
 ##
 # 
@@ -219,7 +224,7 @@ def bme():
 def mydb():
     global pklData,numBadPings
     # Get current values from all the sensors.
-    pressure,outTemp,outHumidity,extraHumid1,windSpeed,winddir,wdirStr,rain,rainRate,wetDry = datagrabber()
+    pressure,outTemp,outHumidity,extraHumid1,windSpeed,winddir,wdirStr,rain,rainRate,wetDry,timeVal = datagrabber()
     # Get the vent fan RPM from the pickle file.
     fan1 = pickle.load(open(OMDHome + '/fanSpd.pkl', 'rb'))
     # Get the CPU temperature from the system.
@@ -295,6 +300,9 @@ def mydb():
                 cursor.close()
                 mydb.close()
                 pklData = []                                ## RESET pklData to an empty list.
+                if timeVal > 0:
+                    elapsedTime = time.time() - timeVal
+                    logger.info('From last Rain tick check to writing the database record was ' + str(elapsedTime) + ' seconds.')
                 if os.path.exists(OMDHome + '/allData.pkl'):
                     os.remove(OMDHome + '/allData.pkl')
                     logger.debug("allData.pkl Pickle file erased.")
