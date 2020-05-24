@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <title>Greg's All Page</title>
+   <!-- Latest compiled and minified CSS -->
+   <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"> -->
+   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+   <!-- Optional theme -->
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+   <!-- Latest compiled and minified JavaScript -->
+   <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script> -->
+   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+   <!-- <META HTTP-EQUIV="refresh" CONTENT="5"> -->
+   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <script>
+      function startTime() {
+        var today = new Date();
+        var h = today.getHours();
+        var m = today.getMinutes();
+        var s = today.getSeconds();
+        h = checkTime(h);
+        m = checkTime(m);
+        s = checkTime(s);
+        document.getElementById('CLOCK').innerHTML =
+        "Current Time: " + h + ":" + m + ":" + s;
+        var t = setTimeout(startTime, 500);
+      }
+      function checkTime(i) {
+        if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+        return i;
+      }
+      </script>
+</head>
+
+<body onload="startTime()">
+    <!-- <div class="col-md-1">
+    <div class="row"> <div class="col-md-2"> -->
+    <div class="container-fluid">
+    <h2>Mother</h2>
+
+    {{recTime}}<br>
+    Temp: <b>{{outTemp}}°F</b> - Humidity: <b>{{outHumidity}}</b><br>
+    Wind: <b>{{windDir}} @ {{wsM}} mph </b> - Pool: <b>{{poolTempIn}}°F</b><br>
+    {% if wetDry < 0.5 %}
+      Wet or Dry: <b>Wet</b><br>
+    {% else %}
+      Wet or Dry: <b>Dry</b><br>
+    {% endif %}
+    Rain Rate: <b>{{rainRate}}</b> -  Accumulation: <b>{{inchRain}}</b> inches since Midnight.<br>
+    Shop Temp: <b>{{shopTemp}}</b> - Shop Humidity: <b>{{shopHumidity}}</b> - ShopCPU: <b>{{shopCPU}}</b></br>
+    <br>
+
+    
+    <!-- <a href="/2/" class="btn btn-primary btn-sm" role="button">View Schedule</a><br><br> -->
+    <a href="/outStats" class="btn btn-primary btn-sm" role="button">WeatherPi</a> &nbsp; <a href="/RBWP" class="btn btn-primary btn-sm" role="button">PwrCycle WP</a><br><br>
+    <a href="http://192.168.1.11/" class="btn btn-primary btn-sm" role="button">Pool Controls</a> &nbsp;<a href="http://192.168.1.11/graphs/" class="btn btn-primary btn-sm" role="button">Pool Graph</a><br><br>
+    <a href="/stats" class="btn btn-primary btn-sm" role="button">Random Gear Stats</a><br><br>
+    <h4>Cameras</h4>
+    <a href="/mon1" class="btn btn-primary btn-sm" role="button">Monitor1</a> &nbsp;<a href="/mon2" class="btn btn-primary btn-sm" role="button">Monitor2</a> &nbsp; <a href="/mon5" class="btn btn-primary btn-sm" role="button">WeatherPi</a><br><br>
+    <a href="/mon3" class="btn btn-primary btn-sm" role="button">Monitor3</a> &nbsp;<a href="/mon4" class="btn btn-primary btn-sm" role="button">Monitor4</a> &nbsp; <a href="/monQuad" class="btn btn-primary btn-sm" role="button">Quad</a><br><br>
+
+  
+
+    {% if recStat == 'on' %}
+      </br>
+      <a href="/all/off" class="btn btn-primary btn-sm" role="button">Turn Recording off</a><br>
+    {% else %}
+      </br>
+      <a href="/all/on" class="btn btn-secondary btn-sm" role="button">Turn Recording on</a><br>
+    {% endif %}
+   <div id="CLOCK"></div>    
+    </div>
+  
+</body>
+</html>
+
