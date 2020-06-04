@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import time,os,logging,configparser,argparse,traceback,signal,sys
+import time,os,logging,configparser,argparse,traceback,signal,sys,subprocess
 
 
 
@@ -28,6 +28,11 @@ def main():
         result.append(ret)
     #logger.info(' End of Report ')
     return bLen,result
+
+def tailLog():
+    cmd = "/usr/bin/tail /home/greg/all/PWS.log"
+    tl = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
+    return tl
 ## - - - - - - END TEST CODE - - - - - - - 
 #
 

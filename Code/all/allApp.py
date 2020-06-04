@@ -355,8 +355,10 @@ def stats():
             s.sendall(b'quit')                                      # last-ditch effort to quit smoothly. May be a waste.
 ## above was for WeatherPi, below is for Brilliant (the mySQL computer)
         bLen,result = zsysRunTest.main()
+        tl = zsysRunTest.tailLog()
 # This Templatedata section still belongs to the stats() function.
     templateData = {                                                # Create the templateData dictionary.
+      'tl' : tl,
       'listLen' : listLen,                                          # Add our 'how many items are there' entry
       'statResp' : statusResp,                                      # Add our raw data from the remote machine.
       'bLen' : bLen,
