@@ -3,15 +3,7 @@
     <head><meta name="viewport" content="width=device-width, initial-scale=1"></head>
 <html>
 <body>
-    <picture>
-        <source srcset="http://192.168.1.22/zm/cgi-bin/nph-zms?scale=5&width=360px&height=auto&display=block&mode=jpeg&maxfps=10&monitor=7&connkey=462396&rand=1579547916" style="float:left" media="(max-width: 800px)">
-        <source srcset="img_flowers.jpg">
-        <img src="http://192.168.1.22/zm/cgi-bin/nph-zms?scale=5&width=360px&height=auto&display=block&mode=jpeg&maxfps=10&monitor=7&connkey=462396&rand=1579547916" style="float:left">
-      </picture>
-<!-- <img src="http://192.168.1.22/zm/cgi-bin/nph-zms?scale=24&width=48%&height=auto&display=block&mode=jpeg&maxfps=10&monitor=7&connkey=462396&rand=1579547916" style="float:left">
-<img src="http://192.168.1.22/zm/cgi-bin/nph-zms?scale=24&width=48%&height=auto&display=block&mode=jpeg&maxfps=10&monitor=6&connkey=462397&rand=2579547916" style="float:right"><br><br>
-<img src="http://192.168.1.22/zm/cgi-bin/nph-zms?scale=24&width=48%&height=auto&display=block&mode=jpeg&maxfps=10&monitor=8&connkey=462398&rand=3579547916" style="float:left">
-<img src="http://192.168.1.22/zm/cgi-bin/nph-zms?scale=24&width=48%&height=auto&display=block&mode=jpeg&maxfps=10&monitor=9&connkey=462399&rand=4579547916" style="float:right"> -->
+    Garage: {% if DoorStat == 'open' %}<img src="{{url_for('static', filename='media/red-led-on-hi.png') }}" alt="Arrow" width="16px"  />{% elif DoorStat == 'closed' %}<img src="{{url_for('static', filename='media/green-led-on-hi.png') }}" alt="Arrow" width="16px"  />{% endif %}
+    Bypass: {% if bpStat == 'On' %}<img src="{{url_for('static', filename='media/red-led-on-hi.png') }}" alt="Arrow" width="16px"  />{% elif bpStat == 'Off' %}<img src="{{url_for('static', filename='media/green-led-on-hi.png') }}" alt="Arrow" width="16px"  />{% endif %}<br>
 
 </body></html>
-<!-- 360x740 -->
