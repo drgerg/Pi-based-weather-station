@@ -45,6 +45,8 @@ def main():
     rawrectime = outData[12]
     if rawrectime > lastRecTime:
 #        logger.info('This record is new: ' + str(rawrectime))
+        inchRain = allGetSQL.inchRainGrab()
+        inchRain = "{:.2f}".format(inchRain)
         recTime = outData[0]
         pressure = outData[1]
         pressNA = "{:.2f}".format(0.0295300 * pressure)
@@ -54,14 +56,16 @@ def main():
         winddir = str(outData[6])
         rawRecTime = outData[12]
         rain = str(outData[13])
-#        logger.info(rain)
+        if outData[13] > 0:
+            logger.info('rain: ' + rain + ' | inchRain: ' + inchRain)
         url = config.get('PWS_Service','Service_URL')
         PID = config.get('PWS_Service','PWSID')
         PPW = config.get('PWS_Service','PWSPassword')
         softwaretype = 'custom_python'
         recordTime = time.strftime("%Y-%m-%d+%H:%M:%S",time.gmtime(rawRecTime))
-        data_string = str(url+'?ID='+PID+'&PASSWORD='+PPW+'&dateutc='+recordTime+'&winddir='+winddir+'&windspeedmph='+windSpeed+'&tempf='+outTemp+'&baromin='+pressNA+'&humidity='+outHumidity+'&rainin='+rain+'&softwaretype='+softwaretype+'&action=updateraw')
-        #data_string = str(url+'?ID='+PID+'&PASSWORD='+PPW+'&dateutc='+recordTime+'&winddir='+winddir+'&windspeedmph='+windSpeed+'&tempf='+outTemp+'&baromin='+pressNA+'&humidity='+outHumidity+'&softwaretype='+softwaretype+'&action=updateraw')
+        data_string = str(url+'?ID='+PID+'&PASSWORD='+PPW+'&dateutc='+recordTime+'&winddir='+winddir+'&windspeedmph='+windSpeed+'&tempf='+outTemp+'&baromin='+pressNA+'&humidity='+outHumidity+'&dailyrainin='+inchRain+'&softwaretype='+softwaretype+'&action=updateraw')
+        # data_string = str(url+'?ID='+PID+'&PASSWORD='+PPW+'&dateutc='+recordTime+'&winddir='+winddir+'&windspeedmph='+windSpeed+'&tempf='+outTemp+'&baromin='+pressNA+'&humidity='+outHumidity+'&softwaretype='+softwaretype+'&action=updateraw')
+        # logger.info(data_string)
         try:
             with request.urlopen(data_string) as response:
                 gotBack = response.read()
@@ -69,7 +73,9 @@ def main():
                     resp = 'Data logged and posted.'
                 else:
                     resp = 'Data NOT logged and posted.'
-#                logger.info(resp)
+                if float(rain) > 0:
+                    logger.info(resp)
+                # logger.info(resp)
         except urllib.error.URLError as e: 
             ResponseData = e.reason
             logger.info('Error: ' + str(ResponseData))

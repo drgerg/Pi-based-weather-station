@@ -21,7 +21,7 @@
 #
 
 
-import os, pickle, re, time, datetime, requests, subprocess, configparser, signal, socket, random, allGetSQL, zsysRunTest
+import os, pickle, re, time, datetime, requests, subprocess, configparser, signal, socket, random, allGetSQL, zAllSysChk,zTest
 from time import sleep
 from collections import OrderedDict
 from flask import Flask, render_template, request, flash, url_for
@@ -75,42 +75,68 @@ else:
 #
 @app.route('/')
 def main():
-   # Retrieve previous state settings from the .pkl file made by 
-   loadStatus = pickle.load(open(allAppHome + '/CurrentStatus.pkl', 'rb'))
-   recStat = str(loadStatus[1]['state']) # Was recording left on when main.html was last seen?
-   outData = allGetSQL.dataGrab()        # Grab the bulk of the current data
-   inchRain = allGetSQL.inchRainGrab()
-   shopTemp,shopHumidity,shopCPU = allGetSQL.shopDataGrab()
-   recTime = outData[0]
-   outTemp = outData[2]
-   wsM = outData[5]
-   windDir = outData[7]
-   outHumidity = outData[4]
-   rainRate = outData[15]
-   wetDry = outData[14]
-   poolTempIn,poolTempOut = allGetSQL.poolDataGrab(0)
-   # Put our variables into the template data dictionary:
-   templateData = {
-       'recTime' : recTime,
-       'outTemp' : outTemp,
-       'outHumidity' : outHumidity,
-       'wsM' : wsM,
-       'windDir' : windDir,
-       'inchRain' : inchRain,
-       'poolTempIn' : poolTempIn,
-       'poolTempOut' : poolTempOut,
-       'shopTemp' : shopTemp,
-       'shopHumidity' : shopHumidity,
-       'shopCPU' : shopCPU,
-       'rainRate' : rainRate,
-       'wetDry' : wetDry,
-       'recStat' : recStat
-      }
-   # 
-   # Pass the template data into the template main.html and show it to the user
-   return render_template('main.html', **templateData)
+    global mainTD
+    # Retrieve previous state settings from the .pkl file made by 
+    loadStatus = pickle.load(open(allAppHome + '/CurrentStatus.pkl', 'rb'))  # this .pkl has pin status data in it.
+    recStat = str(loadStatus[1]['state']) # Was recording left on when main.html was last seen?
+    outData = allGetSQL.dataGrab()        # Grab the bulk of the current data
+    inchRain = allGetSQL.inchRainGrab()
+    shopTemp,shopHumidity,shopCPU = allGetSQL.shopDataGrab()
+    recTime = outData[0]
+    outTemp = outData[2]
+    wsM = outData[5]
+    windDir = outData[7]
+    outHumidity = outData[4]
+    rainRate = outData[14]
+    presTrend = outData[15]
+    humTrend = outData[16]
+    poolTempIn,poolTempOut = allGetSQL.poolDataGrab(0)
+    # Put our variables into the template data dictionary:
+    templateData = {
+        'recTime' : recTime,
+        'outTemp' : outTemp,
+        'outHumidity' : outHumidity,
+        'wsM' : wsM,
+        'windDir' : windDir,
+        'inchRain' : inchRain,
+        'poolTempIn' : poolTempIn,
+        'poolTempOut' : poolTempOut,
+        'shopTemp' : shopTemp,
+        'shopHumidity' : shopHumidity,
+        'shopCPU' : shopCPU,
+        'rainRate' : rainRate,
+        'presTrend' : presTrend,
+        'humTrend' : humTrend,
+        'recStat' : recStat
+        }
+    mainTD = templateData
+    # Pass the template data into the template main.html and show it to the user
+    return render_template('main.html', **templateData)
 #
-## 
+## GARAGE DOOR STATUS CHECKER
+#
+@app.route('/ohd/')
+def ohdChk():
+      DoorStat,bpStat,gCPU = zTest.remPinChk()
+      templateData = {
+          'DoorStat' : DoorStat,
+          'bpStat' : bpStat,
+          'gCPU' : gCPU
+      }
+      return render_template('ohdChk.html', **templateData)
+# #
+# ## HERE'S A TEST VIEW TO PLAY WITH
+# #
+# @app.route('/test/')
+# def urlTest():
+#       DoorStat,bpStat = zTest.remPinChk()
+#       templateData = {
+#           'DoorStat' : DoorStat,
+#           'bpStat' : bpStat
+#       }
+#       return render_template('test.html', **templateData)
+#
+## ZONEMINDER CAMERAS BELOW THIS LINE
 #
 @app.route('/mon1/')
 def mon1():
@@ -261,6 +287,7 @@ def rbwpresp(response):
 #
 @app.route('/<recCtrl>/<action>/')
 def action(recCtrl, action):
+    global mainTD
     # LOAD CURRENT STATUS FROM THE .PKL FILE
 #    loadStatus = pickle.load(open(allAppHome + '/CurrentStatus.pkl', 'rb'))
 #    recStat = str(loadStatus[1]['state']) # 
@@ -275,14 +302,17 @@ def action(recCtrl, action):
         sock.send(b'6|cancel|||| \n7|cancel|||| \n8|cancel|||| \n9|cancel|||| \n10|cancel||||')
         recStat = "off"
     loadStatus[1]['state'] = recStat
-    templateData = {
-        'recStat' : recStat
-        }
-    # Save the current status of all pins to a .pkl file.
+    # templateData = {
+    #     'recStat' : recStat
+    #     }
+    templateData = mainTD
+    templateData['recStat'] = recStat
+    # Save the current status to a .pkl file.
     pickle.dump(loadStatus, open(allAppHome + '/CurrentStatus.pkl', 'wb+'), pickle.HIGHEST_PROTOCOL)
     # 
     # Pass the template data into the template main.html and return it to the user
     return render_template('main.html', **templateData)
+
 #
 ##  GET CURRENT WEATHER DATA FROM THE OUTRAW TABLE AND LET FLASK SERVE IT UP
 #
@@ -291,9 +321,10 @@ def dec2(value):        # processing before is is displayed.  In this case, chan
     value = float(value)
     return "{:.2f}".format(value)
 
+
 @app.route('/outStats/')
 def outstats():
-    recTime,pressure,outTemp,outTempC,outHumidity,windSpeed,winddir,wdirStr,extraHumid1,cpuTemp,recNum,fan1,rawRecTime,rain,wetDry,rainRate = allGetSQL.dataGrab()
+    recTime,pressure,outTemp,outTempC,outHumidity,windSpeed,winddir,wdirStr,extraHumid1,cpuTemp,recNum,fan1,rawRecTime,rain,rainRate,presTrend,humTrend = allGetSQL.dataGrab()
     inchRain = allGetSQL.inchRainGrab()
     #fanSpd = pickle.load(open(outHome + '/fanSpd.pkl', 'rb'))
     pressNA = 0.0295300 * pressure
@@ -310,7 +341,8 @@ def outstats():
       'wsM' : windSpeed,
       'inchRain' : inchRain,
       'rainRate' : rainRate,
-      'wetDry' : wetDry,
+      'presTrend' : presTrend,
+      'humTrend' : humTrend,
       'cpuTemp' : cpuTemp,
 #      'fanSpd' : fanSpd,
       'recNum' : recNum,
@@ -327,42 +359,33 @@ def outstats():
 #
 @app.route('/stats/')
 def stats():
-    HOST = '192.168.1.12'                                           # We're using Unix sockets to get this data.
-    PORT = 64444                                                    # Choose a weird port way high in the ports range.
-    statusResp = []                                                 # Initialize an empty list
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:    # Setup a stream IP socket. I think this uses TCP
-        s.connect((HOST, PORT))                                     # Connect to the remote machine.
-        data = s.recv(1024)                                         # Create a receptacle for initial connection info.
-        reply = data.decode('utf-8')                                # It comes in as bytes type.  Make it UTF-8 so we can play.
-        if 'Welcome' in reply:                                      # A simple test to make sure I'm in the right place.
-            sleep(1)                                                # Hold up a sec.
-            s.sendall(b'sysStat')                                   # Send the command to start the data-gathering on the other end.
-            llen = s.recv(2)                                        # I want to know how many items are in the list of .service files.
-            listLen = llen.decode('utf-8').strip('\n')              # It comes in as bytes type.  Make it UTF-8 and strip line feeds.
-            howMany = int(listLen)                                  # Turn the string into an integer
-            sleep(1)                                                # Hold up a sec.
-            replyStat = s.recv(1024)                                # Create another receptacle for the actual data.
-            statResp = replyStat.decode('utf-8')                    # yeah, once again.  Bytes to utf-8.
-            statusResp = statResp.split(':')                        # I know my incoming data is delineated with colons. Use that.
-            statusResp.remove('')                                   # I know there will be an empty list item.  Get rid of it.
-            s.sendall(b'quit')                                      # Tell the remote machine I'm finished.
-            sleep(1)                                                # Hold up a sec.
-            lastReply = s.recv(1024)                                # Create a receptacle for the response to our 'quit'.
-            lastReply = lastReply.decode('utf-8')                   # Bytes to utf-8.
-            if 'quit' in lastReply:                                 # Test for proper last response.
-                pass                                                # It's all good, so wrap things up.
-        else:                                                       # A 'just in case' check . . . not sure if it's needed.
-            s.sendall(b'quit')                                      # last-ditch effort to quit smoothly. May be a waste.
-## above was for WeatherPi, below is for Brilliant (the mySQL computer)
-        bLen,result = zsysRunTest.main()
-        tl = zsysRunTest.tailLog()
+    result = []
+    sysList = []
+    inc = 1
+    config.read(allAppHome + '/zAllSysChk.conf')
+    while 'sys' + str(inc) in config['Systems']:
+        sysVar = config.get('Systems','sys' + str(inc))
+        portVar = config.get('Systems','port' + str(inc))
+        inc2 = 1
+        while 'service' + str(inc2) in config[sysVar]:
+            svcVar = config.get(sysVar,'service' + str(inc2))
+            status = os.system('ssh -p ' + portVar + ' ' + sysVar + ' ' + 'systemctl is-active --quiet ' + svcVar)
+            if status == 0:
+                strStat = 'OK'
+            else:
+                strStat = 'NOT OK'
+            result.append(sysVar + ',' + svcVar + ',' + strStat)
+            inc2 += 1
+        inc += 1
+    else:
+        print(result)
+        print("That's all.")
+        # ret = '{:>14s} {:<22s}'.format(strStat + ' :', item)
+    # return result
+
 # This Templatedata section still belongs to the stats() function.
     templateData = {                                                # Create the templateData dictionary.
-      'tl' : tl,
-      'listLen' : listLen,                                          # Add our 'how many items are there' entry
-      'statResp' : statusResp,                                      # Add our raw data from the remote machine.
-      'bLen' : bLen,
-      'result' : result                                             # Add results from the local machine too.
+      'gs' : result
       }
     return render_template('stats.html', **templateData)            # Return all this goodness and render stats.html using it.
     

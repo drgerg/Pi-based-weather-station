@@ -1,0 +1,19 @@
+[Unit]
+Description=Sanders PiNet Healthcheck Reporting Regimine  allSysReport.service
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/home/greg/all/zAllSysChk.py
+WorkingDirectory=/home/greg/all/
+StandardOutput=syslog
+StandardError=syslog
+User=greg
+Group=greg
+#ExecStop = /bin/kill -2 $MAINPID
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

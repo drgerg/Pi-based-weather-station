@@ -108,31 +108,52 @@ def dataGrab():
     cpuTemp = float("{0:.2f}".format(float(record['cpuTemp'])))
     recNum = record['id']
     fan1 = int(record['fan1'])
-    rain = record['rain']
-    wetDry = record['wetDry']
+    rain = float(record['rain'])
     rainRate = record['rainRate']
     if rain != None:
         rain = float(record['rain'])
     else:
         rain = 0
     logger.debug('There are ' + str(recNum) + ' records here.')
+    cursor.execute("SELECT pressure,outHumidity FROM " + DBdatabase + '.' + DBtable + " where id>=(select max(id) from " + DBdatabase + '.' + DBtable + ")-2")
+    compareRec = cursor.fetchall()
+    pres,hum = 0,0
+
+    for item in compareRec:
+        pres += item['pressure']
+        hum += item['outHumidity']
+    avPres = pres / len(compareRec)
+    avPres = float("{0:.2f}".format(float(avPres)))
+    avHum =+ hum / len(compareRec)
+    avHum = float("{0:.2f}".format(float(avHum)))
+    presTrend = None
+    humTrend = None
+    if avPres < pressure:
+        presTrend = 2
+    elif avPres == pressure:
+        presTrend = 1
+    else:
+        presTrend = 0
+    if avHum < outHumidity:
+        humTrend = 2
+    elif avHum == outHumidity:
+        humTrend = 1
+    else:
+        humTrend = 0
     cursor.close()
     mydb.close()
-    return recTime,pressure,outTemp,outTempC,outHumidity,windSpeed,winddir,wdirStr,extraHumid1,cpuTemp,recNum,fan1,rawRecTime,rain,wetDry,rainRate
+    return recTime,pressure,outTemp,outTempC,outHumidity,windSpeed,winddir,wdirStr,extraHumid1,cpuTemp,recNum,fan1,rawRecTime,rain,rainRate,presTrend,humTrend
 
 def poolDataGrab(GD):
     GD=str(GD)
-    print("GD comes here as: " + GD)
     funNStr = sys._getframe().f_code.co_name
     logger.debug("Started the " + funNStr + " function")
-#    DBhost=config.get('mySQL','Address')
     DBsock = config.get('mySQL','Socket')
     DBuser=config.get('mySQL','User')
     DBpasswd=config.get('mySQL','Password')
     DBdatabase=config.get('mySQL','Database2')
     DBtable=config.get('mySQL','d2Table1')
     mydb = mysql.connector.connect(
-#        host=DBhost,
         unix_socket=DBsock,
         user=DBuser,
         passwd=DBpasswd,
@@ -169,13 +190,10 @@ def inchRainGrab():
     logger.debug("Got the database: " + str(dbName))
     cursor.execute("SELECT dateTime,rain FROM " + DBdatabase + '.' + DBtable + " where (dateTime>UNIX_TIMESTAMP(CURDATE()) AND rain>'0')")
     record = cursor.fetchall()
-    logger.info('Retrieved ' + str(len(record)) + ' records.')
+    logger.debug('Retrieved ' + str(len(record)) + ' records.')
     cursor.close()
     mydb.close()
-#    print(record)
     inchRain = sum(inR[1] for inR in record)
-#    print(inchRain)
-    logger.info('Reported ' + str(inchRain) + ' inches of rain.')
     return inchRain
 
 def SignalHandler(signal, frame):
