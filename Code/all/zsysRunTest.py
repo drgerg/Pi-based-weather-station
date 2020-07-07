@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import time,os,logging,configparser,argparse,traceback,signal,sys,subprocess
+import time,os,logging,configparser,argparse,traceback,signal,sys,subprocess,io
 
 
 
@@ -31,8 +31,20 @@ def main():
 
 def tailLog():
     cmd = "/usr/bin/tail /home/greg/all/PWS.log"
-    tl = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
-    return tl
+    tList = []
+    tl = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    for line in io.TextIOWrapper(tl.stdout, encoding="utf-8"):
+        # tList.append(line.strip())
+        tList.append(line)
+
+    print(tList)
+    return tList
+
+    # tLog = tl.communicate()
+    # tL = tLog[0]
+    # tL = tL.decode('utf-8')
+    # tList = []
+    # return tL
 ## - - - - - - END TEST CODE - - - - - - - 
 #
 
@@ -54,7 +66,7 @@ if __name__ == "__main__":
     group.add_argument('-d', '--debug', help="Turn on debugging output to log file.", action="store_true")
     group.add_argument('-f', '--func', help="Call the specified function.", action="store")
     TestHome = os.getcwd()                              ## os.getcwd() give you the Current Working Directory.  If you run this from some other directory
-    print(TestHome)                                     ## then the test.log file (for example) gets written there, not in the directory where this 
+    # print(TestHome)                                     ## then the test.log file (for example) gets written there, not in the directory where this 
     logger = logging.getLogger(__name__)                ## python file lives.  
     #
     config = configparser.RawConfigParser()
@@ -62,9 +74,9 @@ if __name__ == "__main__":
     #
     argsTest = parserTest.parse_args()
 
-    if argsTest.func:
-        Tfunc = argsTest.func
-        print(Tfunc)
+    # if argsTest.func:
+    #     Tfunc = argsTest.func
+    #     print(Tfunc)
 
     if argsTest.debug:
         logging.basicConfig(filename=TestHome + '/test.log', format='[%(name)s]:%(levelname)s: %(message)s. - %(asctime)s', datefmt='%D %H:%M:%S', level=logging.DEBUG)
@@ -82,6 +94,7 @@ if __name__ == "__main__":
 #        while True:
 #            main()
         main()
+        tailLog()
         pass
 #                print("Bottom of try")
     except Exception:
