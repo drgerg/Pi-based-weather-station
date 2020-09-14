@@ -1,5 +1,7 @@
 # The Quest for a Reliable, Robust, Repairable Raspberry Pi-based Weather Station
 
+Sept. 14, 2020 NOTE: The YuHan power supply died during a lightening storm.  I replaced it with the guts from an inexpensive UPS, but replaced its dead battery with a fresh 2.4AH battery (which was twice the size of the original.)  If you're interested in this build, keep this in mind.  I'll get those details updated here as soon as I can.
+
 Project Initialized October 2019.
 Project opened to public on Github February 2020. As built: c.$470.00.
 ![RRRRPWS on the pole.](./Pics/RRRRPWS-on-the-pole.jpg)  ![Output as seen in browser.](./Pics/Output-to-browser.jpg)
