@@ -51,8 +51,10 @@ def main():
         pressure = outData[1]
         pressNA = "{:.2f}".format(0.0295300 * pressure)
         outTemp = "{:.1f}".format(outData[2])
-        outHumidity = str(outData[4])
+        outHum = int(outData[4])
+        outHumidity = str(outHum)
         windSpeed = "{:.1f}".format(outData[5])
+        windGust = "{:.1f}".format(outData[17])
         winddir = str(outData[6])
         rawRecTime = outData[12]
         rain = str(outData[13])
@@ -63,7 +65,7 @@ def main():
         PPW = config.get('PWS_Service','PWSPassword')
         softwaretype = 'custom_python'
         recordTime = time.strftime("%Y-%m-%d+%H:%M:%S",time.gmtime(rawRecTime))
-        data_string = str(url+'?ID='+PID+'&PASSWORD='+PPW+'&dateutc='+recordTime+'&winddir='+winddir+'&windspeedmph='+windSpeed+'&tempf='+outTemp+'&baromin='+pressNA+'&humidity='+outHumidity+'&dailyrainin='+inchRain+'&softwaretype='+softwaretype+'&action=updateraw')
+        data_string = str(url+'?ID='+PID+'&PASSWORD='+PPW+'&dateutc='+recordTime+'&winddir='+winddir+'&windspeedmph='+windSpeed+'&windgustmph='+windGust+'&tempf='+outTemp+'&baromin='+pressNA+'&humidity='+outHumidity+'&dailyrainin='+inchRain+'&softwaretype='+softwaretype+'&action=updateraw')
         # data_string = str(url+'?ID='+PID+'&PASSWORD='+PPW+'&dateutc='+recordTime+'&winddir='+winddir+'&windspeedmph='+windSpeed+'&tempf='+outTemp+'&baromin='+pressNA+'&humidity='+outHumidity+'&softwaretype='+softwaretype+'&action=updateraw')
         # logger.info(data_string)
         try:

@@ -21,7 +21,7 @@
 #
 
 
-import os, pickle, re, time, datetime, requests, subprocess, configparser, signal, socket, random, allGetSQL, zAllSysChk,zTest
+import os, sys, pickle, re, time, datetime, requests, subprocess, configparser, signal, socket, random, allGetSQL, zAllSysChk, ohdTest, allNoaaMain
 from time import sleep
 from collections import OrderedDict
 from flask import Flask, render_template, request, flash, url_for
@@ -58,8 +58,8 @@ if os.path.isfile(allAppHome + '/CurrentStatus.pkl'):
 else:
    loadStatus = {
        1 : {'sort' : '1', 'name' : 'all', 'state' : 'off'},
-       2 : {'sort' : '2', 'name' : 'undefined', 'state' : 'undefined'},
-       3 : {'sort' : '3', 'name' : 'undefined', 'state' : 'undefined'},
+       2 : {'sort' : '2', 'name' : 'ohdSBP', 'state' : 'stop'},
+       3 : {'sort' : '3', 'name' : 'ohdBPO', 'state' : 'off'},
        4 : {'sort' : '4', 'name' : 'undefined', 'state' : 'undefined'},
        5 : {'sort' : '5', 'name' : 'undefined', 'state' : 'undefined'},
        6 : {'sort' : '6', 'name' : 'undefined', 'state' : 'undefined'}
@@ -79,6 +79,7 @@ def main():
     # Retrieve previous state settings from the .pkl file made by 
     loadStatus = pickle.load(open(allAppHome + '/CurrentStatus.pkl', 'rb'))  # this .pkl has pin status data in it.
     recStat = str(loadStatus[1]['state']) # Was recording left on when main.html was last seen?
+    ohdSBP = str(loadStatus[2]['state']) # Was ohdSoftBypass left on when main.html was last seen?
     outData = allGetSQL.dataGrab()        # Grab the bulk of the current data
     inchRain = allGetSQL.inchRainGrab()
     shopTemp,shopHumidity,shopCPU = allGetSQL.shopDataGrab()
@@ -107,7 +108,8 @@ def main():
         'rainRate' : rainRate,
         'presTrend' : presTrend,
         'humTrend' : humTrend,
-        'recStat' : recStat
+        'recStat' : recStat,
+        'ohdSBP' : ohdSBP
         }
     mainTD = templateData
     # Pass the template data into the template main.html and show it to the user
@@ -117,19 +119,65 @@ def main():
 #
 @app.route('/ohd/')
 def ohdChk():
-      DoorStat,bpStat,gCPU = zTest.remPinChk()
-      templateData = {
-          'DoorStat' : DoorStat,
-          'bpStat' : bpStat,
-          'gCPU' : gCPU
-      }
-      return render_template('ohdChk.html', **templateData)
+    DoorStat,bpStat,gCPU = ohdTest.remPinChk()
+    ohdBPO = str(loadStatus[3]['state']) # Was ohdSoftBypass left on when main.html was last seen?
+    templateData = {
+        'DoorStat' : DoorStat,
+        'bpStat' : bpStat,
+        'ohdBPO' : ohdBPO,
+        'gCPU' : gCPU
+    }
+    return render_template('ohdChk.html', **templateData)
+# #
+# ## ohd BYPASS OVERRIDE
+# #
+@app.route('/ohdBPO/<option>/')
+def ohdBPO(option):
+
+    loadStatus = pickle.load(open(allAppHome + '/CurrentStatus.pkl', 'rb'))
+    if option == 'on':
+        option = 'sbpoverride'
+    if option == 'off':
+        option = 'sbpoff'
+    print('option: ' + option)
+    BPORtn = ohdTest.remSoftBypass(option)
+    if BPORtn == 'override':
+        ohdBPO = 'on'
+    else:
+        ohdBPO = 'off'
+    print('ohdBPO: ' + ohdBPO)
+    DoorStat,bpStat,gCPU = ohdTest.remPinChk()
+    templateData = {
+    'DoorStat' : DoorStat,
+    'bpStat' : bpStat,
+    'ohdBPO' : ohdBPO,
+    'gCPU' : gCPU
+    }
+    loadStatus[3]['state'] = ohdBPO
+    loadStatus = OrderedDict(sorted(loadStatus.items(), key=lambda kv: kv[1]['sort']))
+    pickle.dump(loadStatus, open(allAppHome + '/CurrentStatus.pkl', 'wb+'), pickle.HIGHEST_PROTOCOL)
+    return render_template('ohdChk.html', **templateData)
+# #
+# ## ohd SOFT BYPASS
+# #
+@app.route('/ohdSBP/<option>/')
+def ohdSBP(option):
+    global mainTD
+    loadStatus = pickle.load(open(allAppHome + '/CurrentStatus.pkl', 'rb'))
+    SBPRtn = ohdTest.remSoftBypass(option)
+    templateData = mainTD
+    templateData['ohdSBP'] = SBPRtn
+    loadStatus[2]['state'] = SBPRtn
+    loadStatus = OrderedDict(sorted(loadStatus.items(), key=lambda kv: kv[1]['sort']))
+    pickle.dump(loadStatus, open(allAppHome + '/CurrentStatus.pkl', 'wb+'), pickle.HIGHEST_PROTOCOL)
+    return render_template('main.html', **templateData)
+#
 # #
 # ## HERE'S A TEST VIEW TO PLAY WITH
 # #
 # @app.route('/test/')
 # def urlTest():
-#       DoorStat,bpStat = zTest.remPinChk()
+#       DoorStat,bpStat = ohdTest.remPinChk()
 #       templateData = {
 #           'DoorStat' : DoorStat,
 #           'bpStat' : bpStat
@@ -289,8 +337,7 @@ def rbwpresp(response):
 def action(recCtrl, action):
     global mainTD
     # LOAD CURRENT STATUS FROM THE .PKL FILE
-#    loadStatus = pickle.load(open(allAppHome + '/CurrentStatus.pkl', 'rb'))
-#    recStat = str(loadStatus[1]['state']) # 
+    loadStatus = pickle.load(open(allAppHome + '/CurrentStatus.pkl', 'rb'))
     if recCtrl == 'all' and action == 'on':
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect(('192.168.1.22', 6802))
@@ -302,12 +349,11 @@ def action(recCtrl, action):
         sock.send(b'6|cancel|||| \n7|cancel|||| \n8|cancel|||| \n9|cancel|||| \n10|cancel||||')
         recStat = "off"
     loadStatus[1]['state'] = recStat
-    # templateData = {
-    #     'recStat' : recStat
-    #     }
     templateData = mainTD
     templateData['recStat'] = recStat
     # Save the current status to a .pkl file.
+    loadStatus = OrderedDict(sorted(loadStatus.items(), key=lambda kv: kv[1]['sort']))
+    print(loadStatus)
     pickle.dump(loadStatus, open(allAppHome + '/CurrentStatus.pkl', 'wb+'), pickle.HIGHEST_PROTOCOL)
     # 
     # Pass the template data into the template main.html and return it to the user
@@ -324,7 +370,7 @@ def dec2(value):        # processing before is is displayed.  In this case, chan
 
 @app.route('/outStats/')
 def outstats():
-    recTime,pressure,outTemp,outTempC,outHumidity,windSpeed,winddir,wdirStr,extraHumid1,cpuTemp,recNum,fan1,rawRecTime,rain,rainRate,presTrend,humTrend = allGetSQL.dataGrab()
+    recTime,pressure,outTemp,outTempC,outHumidity,windSpeed,winddir,wdirStr,extraHumid1,cpuTemp,recNum,fan1,rawRecTime,rain,rainRate,presTrend,humTrend,windGust = allGetSQL.dataGrab()
     inchRain = allGetSQL.inchRainGrab()
     #fanSpd = pickle.load(open(outHome + '/fanSpd.pkl', 'rb'))
     pressNA = 0.0295300 * pressure
@@ -339,6 +385,7 @@ def outstats():
       'windDir' : wdirStr,
       'windDeg' : winddir,
       'wsM' : windSpeed,
+      'wGust' : windGust,
       'inchRain' : inchRain,
       'rainRate' : rainRate,
       'presTrend' : presTrend,
@@ -366,20 +413,29 @@ def stats():
     while 'sys' + str(inc) in config['Systems']:
         sysVar = config.get('Systems','sys' + str(inc))
         portVar = config.get('Systems','port' + str(inc))
-        inc2 = 1
-        while 'service' + str(inc2) in config[sysVar]:
-            svcVar = config.get(sysVar,'service' + str(inc2))
-            status = os.system('ssh -p ' + portVar + ' ' + sysVar + ' ' + 'systemctl is-active --quiet ' + svcVar)
-            if status == 0:
-                strStat = 'OK'
-            else:
-                strStat = 'NOT OK'
+        pingRes = subprocess.call(['/bin/ping', '-c', '1', sysVar], stdout=subprocess.DEVNULL)
+        print('Ping for ' + sysVar + ' returned: ' + str(pingRes))
+        if pingRes == 0: 
+            inc2 = 1
+            while 'service' + str(inc2) in config[sysVar]:
+                svcVar = config.get(sysVar,'service' + str(inc2))
+                status = os.system('ssh -p ' + portVar + ' ' + sysVar + ' ' + 'systemctl is-active --quiet ' + svcVar)
+                if status == 0:
+                    strStat = 'OK'
+                else:
+                    strStat = 'NOT OK'
+                result.append(sysVar + ',' + svcVar + ',' + strStat)
+                inc2 += 1
+            inc += 1
+        else:                                                           # We are NOT CONNECTED.  Note that in the results.
+            print('Ping test for ' + sysVar +' failed.')
+            strStat = 'BAD PING'
+            svcVar = 'ping test'
             result.append(sysVar + ',' + svcVar + ',' + strStat)
-            inc2 += 1
-        inc += 1
+            inc += 1
     else:
-        print(result)
-        print("That's all.")
+        # print(result)
+        print("/stats/ ran.  That's all.")
         # ret = '{:>14s} {:<22s}'.format(strStat + ' :', item)
     # return result
 
@@ -388,7 +444,134 @@ def stats():
       'gs' : result
       }
     return render_template('stats.html', **templateData)            # Return all this goodness and render stats.html using it.
-    
+
+class shopTChng(FlaskForm):
+   shopTempNew = StringField(label='shopTempNew', validators=[Length(min=0, max=2)])
+   goSTN = SubmitField(label = 'GO', id = '1')
+
+@app.route('/shopenv/<semode>/', methods = ['POST', 'GET'])
+def shenv(semode):
+    SEMode = semode
+    SEMessage = 'empty'
+## RETRIEVE CURRENT THERMPARMS
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as ps:
+            ps.connect(('192.168.1.15', 64444))
+    ## Send thermParms request.
+            sockReq = (pickle.dumps('thermParms'))
+            # sleep(1)
+            ps.sendall(sockReq)
+            # sleep(2)
+    ## Receive the requested info.
+            sockXferIn = ps.recv(2048)
+            Tpar = pickle.loads(sockXferIn)
+            returnTemp = Tpar['SETemp']
+            SEMessage = Tpar['SEMode']
+            ps.close()
+    ## Unless there's a problem.
+    except socket.error as err:
+            print('There was an error:' + str(err))
+            # logger.info('There was an error: ' + str(err))
+            # sys.exit(1)
+            pass
+## SELTEMP
+    if SEMode == 'selTemp':
+        app.config['WTF_CSRF_ENABLED'] = False
+        form = shopTChng()
+        if request.method == 'POST': # and form.validate():   
+            returnTemp = request.form.get('shopTempNew')
+            print(str(returnTemp))
+            try:
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as ps:
+                    ps.connect(('192.168.1.15', 64444))
+            ## Send setTemp to get the other end ready.
+                    sockReq = (pickle.dumps('setTemp'))
+                    # sleep(1)
+                    ps.sendall(sockReq)
+                    sleep(.5)
+            ## Send the new target temp.
+                    sockReq = (pickle.dumps(returnTemp))
+                    # sleep(1)
+                    ps.sendall(sockReq)
+                    # sleep(2)
+                    ps.close()
+            ## Unless there's a problem.
+            except socket.error as err:
+                    print('There was an error:' + str(err))
+                    # logger.info('There was an error: ' + str(err))
+                    # sys.exit(1)
+                    pass
+        SEMode = 'shopStats'
+## COOL    
+    if SEMode == 'cool':
+        shStat = os.system(allAppHome + '/socketClient.py -m cool')
+        print('shStat: ' + str(shStat))
+        if shStat == 0:
+            SEMessage = 'cool'
+        else:
+            SEMessage = 'off'
+        SEMode = 'shopStats'
+## OFF
+    if SEMode == 'off':
+        shStat = os.system(allAppHome + '/socketClient.py -m off')
+        print('shStat: ' + str(shStat))
+        if shStat == 0:
+            SEMessage = 'off'
+        else:
+            SEMessage = 'cool'
+        SEMode = 'shopStats'
+## SHOP PINS STATUS
+    if SEMode == 'shopStats':
+        ## Get the Temps.
+        shopTemp,shopHumidity,shopCPU = allGetSQL.shopDataGrab()
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as ps:
+                ps.connect(('192.168.1.15', 64444))
+            ## Get the pins data.
+                sockReq = (pickle.dumps('sendPins'))
+                sleep(.5)
+                ps.sendall(sockReq)
+                sleep(.5)
+                shopTpins = ps.recv(2048)
+                with open(allAppHome + '/shopCurrentPins.pkl', 'wb') as inFile:
+                    inFile.write(shopTpins)
+                sleep(.5)
+                inFile.close()
+            if os.path.isfile(allAppHome + '/shopCurrentPins.pkl'):
+                try:
+                    with open(allAppHome + '/shopCurrentPins.pkl', 'rb') as pinPik:
+                        Tpins = pickle.load(pinPik)
+                        shopTpins = {}
+                        for pin in Tpins:
+                            shopTpins[pin] = {}
+                            shopTpins[pin]['name'] = Tpins[pin]['name']
+                            shopTpins[pin]['state'] = Tpins[pin]['state']
+                except EOFError:
+                    os.remove(allAppHome + '/shopCurrentPins.pkl') 
+                    pass
+        except socket.error as err:
+                print('There was an error:' + str(err))
+                pass
+    templateData = {
+        'shopTemp' : shopTemp,
+        'shopHumidity' : shopHumidity,
+        'shopCPU' : shopCPU,
+        'shopTpins' : shopTpins,
+        'TargTemp' : returnTemp,
+        'SEMessage' : SEMessage
+    }
+    return render_template('shopenv.html', **templateData)
+#
+##  Display the NOAA 7-day forecast for this hour
+#
+@app.route('/7day/')
+def sevenDay():
+    FC7 = allNoaaMain.makeHourFC7()
+
+    templateData = {                                                # Create the templateData dictionary.
+      'wfc' : FC7
+      }
+    return render_template('noaaFC.html', **templateData)            # Return all this goodness and render test.html using it.
 
 
 

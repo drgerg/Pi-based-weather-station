@@ -60,7 +60,7 @@ def shopDataGrab():
     record = cursor.fetchone()
     logger.info('The last record is number: ' + str(record['id']))
 #    print('The last record is number: ' + str(record['id']))
-    shopTemp = float("{0:.2f}".format(float(record['shopTemp'])))
+    shopTemp = float("{0:.2f}".format(float(record['shopTempBME'])))
     shopHumidity = float("{0:.2f}".format(float(record['shopHumidity'])))
     shopCPU = float("{0:.2f}".format(float(record['shopCPU'])))
     return shopTemp,shopHumidity,shopCPU
@@ -102,6 +102,7 @@ def dataGrab():
     outTempC = record['outTemp']
     outHumidity = float("{0:.2f}".format(float(record['outHumidity'])))
     windSpeed = float("{0:.2f}".format(float(record['windSpeed'])))
+    windGust = float("{0:.2f}".format(float(record['windGust'])))
     winddir = float("{0:.2f}".format(float(record['winddir'])))
     wdirStr = record['wdirStr']
     extraHumid1 = float("{0:.2f}".format(float(record['extraHumid1'])))
@@ -142,7 +143,7 @@ def dataGrab():
         humTrend = 0
     cursor.close()
     mydb.close()
-    return recTime,pressure,outTemp,outTempC,outHumidity,windSpeed,winddir,wdirStr,extraHumid1,cpuTemp,recNum,fan1,rawRecTime,rain,rainRate,presTrend,humTrend
+    return recTime,pressure,outTemp,outTempC,outHumidity,windSpeed,winddir,wdirStr,extraHumid1,cpuTemp,recNum,fan1,rawRecTime,rain,rainRate,presTrend,humTrend,windGust
 
 def poolDataGrab(GD):
     GD=str(GD)
