@@ -55,9 +55,17 @@ In a desktop browser or on my phone, this is the screen I go to first when I wan
 Here are the files that live on the little Intel i3 Lenovo in my office.  I did this to take as much processing pressure off of the Raspberry Pi as possible.  I want all of its resources to be focused on gathering data from the sensors, collating it and delivering it to this little guy.  He can take it from there.
 
 - allApp.conf - configuration options live here.
+- allGetNoaa.py - runs as a service (allGetNoaa.service)
 - allApp.py - the Flask front-end file, this is the central hub.
 - allGetSQL.py - the name says it all.  This program pulls data from the mySQL database and feeds it to allApp.py for you.
 - allPWSWeather.py - this one sets up the regular reports to PWSWeather.com.
 - z-sysRunTest.py - a utility that checks the status of the two system services we run on this machine.
 
-The two .service files are in the _lib_systemd_system_ folder.
+##  The .service files: 
+
+These files are in the _lib_systemd_system_ folder as a reference.  You will need to recreate them in the <code>/lib/systemd/system/</code> folder on your "all" computer.
+
+- allApp.service - This is the main backbone of the user-interface system for the Pi-Net.
+- allGetNoaa.service - this gets a fresh weather forecast from NOAA National Weather Service every 4 hours.
+- allPWS.service - this sends our weather station report to PWSweather.com every minute.
+- allSysReport.service - this runs zAllSysChk.py every 10 minutes to keep track of the overall health of the Pi-Net.
