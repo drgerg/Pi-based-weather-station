@@ -15,7 +15,7 @@ There is the question of all the prerequisites for getting all this running, and
 05/17/2020 - Actually, now I'm feeling pretty good about this.  The weather station is chugging along happily.  I've added some long-awaited touches to my interface, which makes me feel good.
 11/28/2020 - OK.  I've finally gotten to the point where I think what I've done is worthy.  No more apologies.  It works. It works consistently and correctly.  
 
-## Necessary files from the 'out' directory
+## Necessary files from the 'out' directory (WEATHER STATION CODE)
 
 ### These are the basis of the system
 
@@ -47,7 +47,7 @@ get your own system's data in them first, Then there are proper steps you need t
 - rainMainDATA.service - starts collecting rainfall data on boot.
 - outSocket.service - runs a socket to allow for simple local diagnosics.
 
-## Information on files in the 'all' directory
+## Information on files in the 'all' directory (HTTP USER INTERFACE SYSTEM CODE)
 
 ![Output as seen in browser.](./all/allApp_Browser_output.png)
 

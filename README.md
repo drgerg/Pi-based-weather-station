@@ -1,5 +1,7 @@
 # The Quest for a Reliable, Robust, Repairable Raspberry Pi-based Weather Station
 
+November 28, 2020 NOTE: The WeatherPi made it through Hurricane Sally and the rest of the hurricane season just fine.  It recorded over two feet of rainfall, and winds in excess of 75mph before the power went out and the battery eventually died.  I am very proud of the performance of the system and tickled pink that what has become the Pi-Net works so well.
+
 Sept. 14, 2020 NOTE: The YuHan power supply died during a lightening storm.  I replaced it with the guts from a dead inexpensive UPS and a 120VAC to 12VDC supply. I replaced the UPS's dead battery with a fresh 5AH battery (which was twice the size of the original.)  If you're interested in this build, keep this in mind.  I'll get those details updated here as soon as I can. (new photos in PICS folder)
 
 Project Initialized October 2019.
@@ -19,7 +21,7 @@ Here's what's where:  (remember: this is all in progress still)
 - **Station_Assembly_Docs**: contains documents pertaining to the actual assembly of the station.
   - **There are no step-by-step instructions there.**  But there is a [block diagram](./Station_Assembly_Docs/System_Block_Diagram.pdf) and a [schematic diagram](./Station_Assembly_Docs/WeatherPi_System_Schematic-V1.3.pdf).  And don't forget the Station_Parts_List.pdf in Component Docs.
 
-This is not a quick-and-easy project.  The station is powered by a remote 12VDC power supply with a battery backup.  I dug a trench, put PVC conduit in it, and pulled 14AWG Romex into it.  It's a good solution.  I drove ground rods and put in-line lighting/surge protectors on both ends of that power run.  I used a power supply made for controlled access doors.  A benefit of doing that is it has a timed relay built in.  By routing the 12V output of the supply through that relay, I have a way to remotely power-cycle (reboot) the station.  This has been VERY handy during this development stage.
+This is not a quick-and-easy project.  The station is powered by a remote 12VDC power supply with a battery backup.  I dug a trench, put PVC conduit in it, and pulled 14AWG Romex into it.  It's a good solution.  I drove ground rods and put in-line lighting/surge protectors on both ends of that power run.  I use the guts from a low-cost UPS feeding a Buck converter for power.  By routing the 12V output of the converter through a relay (which is triggered by the PoolPi), I have a way to remotely power-cycle (reboot) the station.  This was VERY handy during development.
 
 The whole Weather Station package is really two computers (and interfaces with two more the way I have it set up here).  The station acquires data from the sensors, makes necessary calculations and stores that data via WiFi to a mySQL server running in my house.  That machine also serves web interface data to end-users using Python/Flask/Jinja/Gunicorn and nginx (webserver).  Video from the Pi Camera gets sent to my Zoneminder system. That video **can** be viewed directly from the station using a web browser, but I already had Zoneminder going, so it just made sense to incorporate the feed from the WeatherPi.  The front-end server ("all" is its name) also displays the temperature and humidity in my shop.  That is gathered by another Pi with a DTH11 sensor on it.  It also writes to the mySQL database.
 
