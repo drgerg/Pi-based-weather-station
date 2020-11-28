@@ -36,7 +36,8 @@
          Pressure: <b>{{bmpPressNA | dec2}} inHg</b>  ({{bmpPressRaw | dec2}} hPa) {% if presTrend == 2 %}<img src="{{url_for('static', filename='media/arrow-up.jpg') }}" alt="Arrow" width="16px"  />{% elif presTrend == 1 %}<img src="{{url_for('static', filename='media/arrow-steady.jpg') }}" alt="Arrow" width="16px"  />{% elif presTrend == 0 %}<img src="{{url_for('static', filename='media/arrow-down.jpg') }}" alt="Arrow" width="16px"  />{% endif %}<br>
          Humidity: <b>{{bmpHumid | dec2}}%</b> (Raw: {{bmpPreHum | dec2}}%) {% if humTrend == 2 %}<img src="{{url_for('static', filename='media/arrow-up.jpg') }}" alt="Arrow" width="16px"  />{% elif humTrend == 1 %}<img src="{{url_for('static', filename='media/arrow-steady.jpg') }}" alt="Arrow" width="16px"  />{% elif humTrend == 0 %}<img src="{{url_for('static', filename='media/arrow-down.jpg') }}" alt="Arrow" width="16px"  />{% endif %}<br>
    Wind Direction: <b>{{windDir}}</b> ({{windDeg}} degrees)<br>
-       Wind Speed: <b>{{wsM}}mph</b><br> <b>{{inchRain | dec2}}</b> inches of rain since Midnight.<br>
+       Wind Speed: <b>{{wsM}}mph</b>  Gust: <b>{{wGust}}mph</b><br>
+       <b>{{inchRain | dec2}}</b> inches of rain since Midnight.<br>
     Rainfall Rate: <b>{{rainRate | dec2}}</b> in/hr.<br>
          CPU Temp: {{cpuTemp}} SysFan RPM: {{fan1}}<br>
          There are {{recNum}} records in the database.<br><br>

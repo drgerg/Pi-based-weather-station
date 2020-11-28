@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <title>Random Gear Stats</title>
+   <title>NOAA Forecast</title>
    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
    <link href="../static/thistable.css" rel="stylesheet">
    <script src="../static/css/bootstrap.min.js"></script>
@@ -30,12 +30,12 @@
 <body onload="startTime()">
 
   <div class="container-fluid">
-  <h1>Current Gear Stats</h1>
+  <h3>7-day NOAA Forecast</h3>
   <table>
-    <tr><th>System</th><th>Service</th><th>Status</th></tr>
-    {% for rec in gs %}
-      {% set gsitem = rec.split(',') %}
-      <tr><td>{{ gsitem[0] }}</td><td>{{ gsitem[1] }}</td><td>{{ gsitem[2] }}</td></tr>
+    <tr><th>Day</th><th>Hi/Lo</th><th>Hour</th><th>TF</th><th>Wind</th><th>Dir</th><th>Text</th></tr>
+    {% for rec in wfc %}
+      {% set wfcitem = rec.split(',') %}
+      <tr><td>{{ wfcitem[0] }}</td><td>{{ wfcitem[1] }}</td><td>{{ wfcitem[2] }}</td><td>{{ wfcitem[3] }}</td><td>{{ wfcitem[4] }}</td><td>{{ wfcitem[5] }}</td><td>{{ wfcitem[6] }}</td></tr>
         {% endfor %}
   </table>
 

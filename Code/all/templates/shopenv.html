@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <title>Shop Environmental Controls</title>
+   <link href="{{url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+   <script src="{{url_for('static', filename='js/jquery-3.5.1.js') }}"></script>
+   <script src="{{url_for('static', filename='js/bootstrap.min.js') }}"></script>
+   <!-- <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+   <script src="../static/js/jquery-3.5.1.js"></script>
+   <script src="../static/js/bootstrap.min.js"></script> -->
+   <!-- <META HTTP-EQUIV="refresh" CONTENT="5"> -->
+   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <script>
+      function startTime() {
+        var today = new Date();
+        var h = today.getHours();
+        var m = today.getMinutes();
+        var s = today.getSeconds();
+        h = checkTime(h);
+        m = checkTime(m);
+        s = checkTime(s);
+        document.getElementById('CLOCK').innerHTML =
+        "Current Time: " + h + ":" + m + ":" + s;
+        var t = setTimeout(startTime, 500);
+      }
+      function checkTime(i) {
+        if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+        return i;
+      }
+      </script>
+</head>
+
+<body onload="startTime()">
+    <!-- <div class="col-md-1">
+    <div class="row"> <div class="col-md-2"> -->
+    <div class="container-fluid">
+    <h2>Shop Environ</h2>
+Temp: {{shopTemp}}, Humidity: {{shopHumidity}}</br>
+    <table>
+      <tr><th>Shop AirConditioner Status</th></tr>
+       {% for pin in shopTpins %}
+           <tr><td>{{ shopTpins[pin]['name'] }}</td>
+            <td>{% if shopTpins[pin]['state'] == 1 %}<img src="{{url_for('static', filename='media/gray-led.png') }}" alt="Off" width="18px"  />{% elif shopTpins[pin]['state'] == 0 %}<img src="{{url_for('static', filename='media/red-led-on-hi.png') }}" alt="On" width="18px"  />{% endif %}</td></tr>
+       {% endfor %}
+    </table>
+
+    <h4>Set Temp:</h4>
+    Current target temp: {{ TargTemp }}
+    <form method='POST' action="{{ url_for('shenv', semode='selTemp') }}">
+      <div class="form-group">
+        <label for="shopTempNew">Select new target temp.</label>
+        <select class="form-control" style="width: 100px" id="shopTempNew" name="shopTempNew">
+          <option>Select</option>
+          <option>82</option><option>81</option><option>80</option><option>79</option><option>78</option>
+          <option>77</option><option>76</option><option>75</option><option>73</option><option>72</option>
+          <option>71</option><option>70</option><option>69</option><option>68</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary btn-sm" >Submit</button>
+    </form>
+
+    Last feedback: {{SEMessage}}
+
+    {% if shopTpins[24]['state'] == 0 %}
+      </br>
+      <a href="/shopenv/off" class="btn btn-primary btn-sm" role="button">Turn Shop AC Off</a><br>
+    {% else %}
+      </br>
+      <a href="/shopenv/cool" class="btn btn-secondary btn-sm" role="button">Turn Shop AC On</a><br>
+    {% endif %}
+
+   <div id="CLOCK"></div>    
+
+    <a href="http://192.168.1.150/" class="btn btn-primary btn-sm" role="button">Home</a><br><br>
+    </div>
+</body>
+</html>
+

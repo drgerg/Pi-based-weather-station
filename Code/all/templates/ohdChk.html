@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
    <title>Garage Status</title>
-   <link href="../static/css/bootstrap.min.css" rel="stylesheet">
-   <link href="../static/thistable.css" rel="stylesheet">
-   <script src="../static/css/bootstrap.min.js"></script>
+   <link href="{{url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+   <script src="{{url_for('static', filename='js/jquery-3.5.1.js') }}"></script>
+   <script src="{{url_for('static', filename='js/bootstrap.min.js') }}"></script>
    <!-- <META HTTP-EQUIV="refresh" CONTENT="5"> -->
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <script>
@@ -29,17 +29,25 @@
 
 <body onload="startTime()">
 
-      <div class="container-fluid">
-   <br>
-   <h3>Garage Status</h3>
-   <br>
-   <b>Door:</b> {% if DoorStat == 'open' %}<img src="{{url_for('static', filename='media/red-led-on-hi.png') }}" alt="Arrow" width="26px"  />{% elif DoorStat == 'closed' %}<img src="{{url_for('static', filename='media/green-led-on-hi.png') }}" alt="Arrow" width="26px"  />{% endif %}
-   <b>Bypass:</b> {% if bpStat == 'On' %}<img src="{{url_for('static', filename='media/red-led-on-hi.png') }}" alt="Arrow" width="26px"  />{% elif bpStat == 'Off' %}<img src="{{url_for('static', filename='media/green-led-on-hi.png') }}" alt="Arrow" width="26px"  />{% endif %}<br>
-   <br>{{gCPU}}<br>
-    <br>
-   <div id="CLOCK"></div>
-   <!-- {{url1}}<br> -->
-   </div><br>
-   <a href="http://192.168.1.150/" class="btn btn-primary btn-sm" role="button">Home</a><br><br>
+  <div class="container-fluid">
+  <br>
+  <h3>Garage Status</h3>
+  <br>
+  <b>Door:</b> {% if DoorStat == 'open' %}<img src="{{url_for('static', filename='media/red-led-on-hi.png') }}" alt="Open" width="26px"  />{% elif DoorStat == 'closed' %}<img src="{{url_for('static', filename='media/green-led-on-hi.png') }}" alt="Closed" width="26px"  />{% endif %}
+  <b>Bypass:</b> {% if bpStat == 'On' %}<img src="{{url_for('static', filename='media/red-led-on-hi.png') }}" alt="On" width="26px"  />{% elif bpStat == 'Off' %}<img src="{{url_for('static', filename='media/gray-led.png') }}" alt="Off" width="26px"  />{% endif %}<br>
+  <br>{{gCPU}}<br>
+
+    {% if ohdBPO == 'off' %}
+
+      <a href="/ohdBPO/on" class="btn btn-secondary btn-sm" role="button">Turn Override On</a><br>
+
+    {% else %}
+
+      <a href="/ohdBPO/off" class="btn btn-primary btn-sm" role="button">Turn Override Off</a><br>
+    {% endif %}
+  <br>
+  <div id="CLOCK"></div>
+  <a href="http://192.168.1.150/" class="btn btn-primary btn-sm" role="button">Home</a><br><br>
+  </div><br>
 </body>
 </html>

@@ -1,9 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head><meta name="viewport" content="width=device-width, initial-scale=1"></head>
-<html>
-<body>
-    Garage: {% if DoorStat == 'open' %}<img src="{{url_for('static', filename='media/red-led-on-hi.png') }}" alt="Arrow" width="16px"  />{% elif DoorStat == 'closed' %}<img src="{{url_for('static', filename='media/green-led-on-hi.png') }}" alt="Arrow" width="16px"  />{% endif %}
-    Bypass: {% if bpStat == 'On' %}<img src="{{url_for('static', filename='media/red-led-on-hi.png') }}" alt="Arrow" width="16px"  />{% elif bpStat == 'Off' %}<img src="{{url_for('static', filename='media/green-led-on-hi.png') }}" alt="Arrow" width="16px"  />{% endif %}<br>
+<head>
+   <title>NOAA Forecast</title>
+   <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+   <link href="../static/thistable.css" rel="stylesheet">
+   <script src="../static/css/bootstrap.min.js"></script>
+   <!-- <META HTTP-EQUIV="refresh" CONTENT="5"> -->
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <script>
+      function startTime() {
+        var today = new Date();
+        var h = today.getHours();
+        var m = today.getMinutes();
+        var s = today.getSeconds();
+        m = checkTime(m);
+        s = checkTime(s);
+        document.getElementById('CLOCK').innerHTML =
+        "Current Time: " + h + ":" + m + ":" + s;
+        var t = setTimeout(startTime, 500);
+      }
+      function checkTime(i) {
+        if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+        return i;
+      }
+      </script>
 
-</body></html>
+</head>
+
+<body onload="startTime()">
+
+  <div class="container-fluid">
+  <h1>7-day NOAA Forecast</h1>
+  <table>
+    <tr><th>Day</th><th>Hour</th><th>Temp</th><th>Wind</th><th>Dir</th><th>Text</th></tr>
+    {% for rec in wfc %}
+      {% set wfcitem = rec.split(',') %}
+      <tr><td>{{ wfcitem[0] }}</td><td>{{ wfcitem[1] }}</td><td>{{ wfcitem[2] }}</td><td>{{ wfcitem[3] }}</td><td>{{ wfcitem[4] }}</td><td>{{ wfcitem[5] }}</td></tr>
+        {% endfor %}
+  </table>
+
+  <br>
+  <div id="CLOCK"></div>
+  <a href="http://192.168.1.150/" class="btn btn-primary btn-sm" role="button">Home</a><br><br>
+  </div><br>
+
+</body>
+</html>
