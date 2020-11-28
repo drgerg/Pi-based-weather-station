@@ -4,7 +4,7 @@ This file is here out of respect for any degreed SysAdmin who has ventured here 
 
 This code was all written by a self-taught geek.  It works and does exactly what I wanted it to do.  So, in that respect, it's perfect.
 
-The Pi is talking to the mySQL machine, which in turn is talking to [www.pwsweather.com](https://www.pwsweather.com/station/pws/kflmilto35).  It's pretty cool to see the data there.
+The WeatherPi is talking to the mySQL machine, which in turn is talking to [www.pwsweather.com](https://www.pwsweather.com/station/pws/kflmilto35).  It's pretty cool to see the data there.
 
 There are two folders in the Code repo folder: the **all** folder and the **out** folder.  The **out** folder contains code for the WeatherPi (RRRRPWS).  The **all** folder contains code that runs on a Linux box inside the house.  That computer runs mySQL, and the Python/Flask/Gunicorn/nginx browser interface for the whole shooting match.
 
