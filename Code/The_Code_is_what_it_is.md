@@ -1,8 +1,8 @@
-# Today's Code is Rudimentary - understand that
+# No more apologies for my code.  I think it's fine.
 
-This file is here out of respect for anyone who has ventured here and is actually interested.
+This file is here out of respect for any degreed SysAdmin who has ventured here and is curious.
 
-This code is a touch rough.  But it works and does exactly what I wanted it to do.  So, in that respect, it's perfect.
+This code was all written by a self-taught geek.  It works and does exactly what I wanted it to do.  So, in that respect, it's perfect.
 
 The Pi is talking to the mySQL machine, which in turn is talking to [www.pwsweather.com](https://www.pwsweather.com/station/pws/kflmilto35).  It's pretty cool to see the data there.
 
