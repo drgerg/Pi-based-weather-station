@@ -4,8 +4,8 @@ After=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/home/YourUserName/out/wPiBoot.py
-WorkingDirectory=/home/YourUserName/out/
+ExecStart=/home/greg/out/wPiBoot.py
+WorkingDirectory=/home/greg/out/
 StandardOutput=syslog
 StandardError=syslog
 User=root

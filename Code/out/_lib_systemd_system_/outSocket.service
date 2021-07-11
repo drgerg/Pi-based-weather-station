@@ -1,15 +1,15 @@
 [Unit]
-Description=Sanders WeatherPi mySQL Data Logger  outMainDATA.service
+Description=Sanders WeatherPi Unix Socket Utility
 After=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/home/greg/out/outMainDATA.py
+ExecStart=/home/greg/out/outSocket.py
 WorkingDirectory=/home/greg/out/
 StandardOutput=syslog
 StandardError=syslog
-User=greg
-Group=www-data
+User=root
+Group=root
 #ExecStop = /bin/kill -2 $MAINPID
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID

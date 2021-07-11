@@ -1,6 +1,8 @@
 #!/usr/bin/python
+# coding: latin-1
 #
 ## Greg Sanders' modified version Feb. 2020.
+##  Used by outMainDATA.py
 #
 #--------------------------------------
 #    ___  ___  _ ____
@@ -122,7 +124,7 @@ def readBME280All(addr=DEVICE):
 
   # Wait in ms (Datasheet Appendix B: Measurement time and current calculation)
   wait_time = 1.25 + (2.3 * OVERSAMPLE_TEMP) + ((2.3 * OVERSAMPLE_PRES) + 0.575) + ((2.3 * OVERSAMPLE_HUM)+0.575)
-  time.sleep(wait_time/1000)  # Wait the required time  
+  time.sleep(wait_time/1000)  # Wait the required time
 
   # Read temperature/pressure/humidity
   data = bus.read_i2c_block_data(addr, REG_DATA, 8)
@@ -131,21 +133,26 @@ def readBME280All(addr=DEVICE):
   hum_raw = (data[6] << 8) | data[7]
   #
   ## trying a compensation value here.  My humidity readings are consistently low
-  hum_raw = hum_raw + 3880.0
+  # hum_raw = hum_raw + 3880.0  ## the comp value may be ill-advised.
   #
 
   #Refine temperature
   var1 = ((((temp_raw>>3)-(dig_T1<<1)))*(dig_T2)) >> 11
   var2 = (((((temp_raw>>4) - (dig_T1)) * ((temp_raw>>4) - (dig_T1))) >> 12) * (dig_T3)) >> 14
   t_fine = var1+var2
-#  print("  t_fine @ line 134: " + str(t_fine))
-#  temperature = float(((t_fine * 5) + 128) >> 8)
-  temperature = float(((t_fine * 5) -  32768) >> 8)
-#  print("    temperature 137: " + str(temperature))
+  temperature = float(((t_fine * 5) - 60000) >> 8)
+  # temperature = float(((t_fine * 5) -  32768) >> 8)  ## another adjustment to the defaults.
+  # print("  t_fine @ line 142: " + str(t_fine))
+  # print("           t_fine*5: " + str(t_fine*5))
+  # gimme = 60000
+  # print("              gimme: " + str(gimme))
+  # tfshift8 = float(((t_fine*5) - gimme) >> 8)
+  # print("           tfshift8: " + str(tfshift8))
+  # print("   temperature @144: " + str(temperature))
 
   # Refine pressure and adjust for temperature
   var1 = t_fine / 2.0 - 64000.0
-#  var1 = t_fine / 2.0 - 65536.0       ##  a mod I tried 
+#  var1 = t_fine / 2.0 - 65536.0       ##  a mod I tried
   var2 = var1 * var1 * dig_P6 / 32768.0
   var2 = var2 + var1 * dig_P5 * 2.0
   var2 = var2 / 4.0 + dig_P4 * 65536.0
@@ -161,35 +168,42 @@ def readBME280All(addr=DEVICE):
     pressure = pressure + (var1 + var2 + dig_P7) / 16.0
     pressure = pressure + 240                 ##  compensation factor for Milton, FL - Greg Sanders
 
-  # Refine humidity
-  #  humidity = t_fine - 76800.0   # original setting
-  #
-  ## this is where I made some radical changes to the (t_fine * #).  It was 2 and then - something.  
-  ## I made it * 10 and finally got a result that matches NAS Whiting.  We'll see how it performs in the long run.
-  #                       vvvv 
-#  print(str("  t_fine @ line 155: " + str(t_fine)))
-  humidity = t_fine - 76800.0
-#  print("humidity @ line 162: " + str(humidity))
-#  print(" hum_raw @ line 131: " + str(hum_raw))
-#  print("             dig_H1: " + str(dig_H1))
-#  print("             dig_H2: " + str(dig_H2))
-#  print("             dig_H3: " + str(dig_H3))
-#  print("             dig_H4: " + str(dig_H4))
-#  print("             dig_H5: " + str(dig_H5))
-#  print("             dig_H6: " + str(dig_H6))
-  #
-  humidity = (hum_raw - (dig_H4 * 64.0 + dig_H5 / 16384.0 * humidity)) * (dig_H2 / 65536.0 * (1.0 + dig_H6 / 67108864.0 * humidity * (1.0 + dig_H3 / 67108864.0 * humidity)))
-#  print("          Humidity1: " + str(humidity))
-#  humidity = humidity * (1.0 - dig_H1 * humidity / 524288.0)
-  humidity = humidity * (1.0 - dig_H1 * humidity / 110000.0)  # further adjustment to bring humidity readings in line with multiple nearby stations
-  preHum = humidity
-#  print("          Humidity2: " + str(humidity))
-  if humidity > 100:
-    humidity = 100
-  elif humidity < 0:
-    humidity = 0
+#   # Refine humidity
+#   #  humidity = t_fine - 76800.0   # original setting
+#   #
+# #  print(str("  t_fine @ line 155: " + str(t_fine)))
+#   humidity = t_fine - 76800.0                 ## DEFAULT VALUE
+#   # print('     First humidity: ' + str(humidity))
+#   humidity = (hum_raw - (dig_H4 * 64.0 + dig_H5 / 16384.0 * humidity)) * (dig_H2 / 65536.0 * (1.0 + dig_H6 / 67108864.0 * humidity * (1.0 + dig_H3 / 67108864.0 * humidity)))
+#   # print("    Second Humidity: " + str(humidity))
+# #  humidity = humidity * (1.0 - dig_H1 * humidity / 524288.0)  # DEFAULT VALUE. SMALLER NUMBERS CAUSE THE READING TO GO DOWN
+# #  humidity = humidity * (0.5 - dig_H1 * humidity / 262144.0)  # 88% reference from local PWS's.  result: 88.12%
+#   # H1Cal = 0.46                               ## another manual calibration attempt.
+#   H1Cal = 1                                  ## the above attempt was bust.  Don't do that again.
+#   hcp2Var = 30100                           ## 524288 is the divisor from the original.
+#   # print('              H1Cal: ' + str(H1Cal))
+#   # print('   hcp2Var (524288): ' + str(hcp2Var))
+#   # print('     default dig_H1: ' + str(dig_H1))
+#   H1CalThum = dig_H1 * humidity               ## multiplication step.
+#   # print('  dig_H1 * humidity: ' + str(H1CalThum))
+#   humCalP2 = H1CalThum / hcp2Var              ## division step.
+#   # print('    humidity/' + str(hcp2Var) + ': ' + str(humCalP2))
+#   humidity = humidity * (H1Cal - humCalP2)
+# #  humidity = humidity * (1.0 - dig_H1 * humidity / hcp2Var)  # 88% reference from local PWS's.  result: 93.75%
+# #  humidity = humidity * (1.0 - dig_H1 * humidity / 32000.0) # 88% reference from local PWS's.  result: 106.6%
+# #  humidity = humidity * (1.0 - dig_H1 * humidity / 30000.0) # 88% reference from local PWS's.  result: 99.13%
+# #  humidity = humidity * (1.0 - dig_H1 * humidity / 29500.0) # 88% reference from local PWS's.  result: 97.11%
+# #  humidity = humidity * (1.0 - dig_H1 * humidity / 28000.0)  # result: max reading of 93%
+#   # print(' Third humidity: ' + str(humidity))
+#   preHum = humidity
+#   # print("          Humidity2: " + str(humidity))
+#   if humidity > 100:
+#     humidity = 100
+#   elif humidity < 0:
+#     humidity = 0
 
-  return temperature/100.0,pressure/100.0,humidity,preHum
+  # return temperature/100.0,pressure/100.0,humidity,preHum
+  return temperature/100.0,pressure/100.0
 
 def main():
 
@@ -197,14 +211,15 @@ def main():
 #  print("       Chip ID     : " + str(chip_id))
 #  print("       Version     : " + str(chip_version))
 
-  temperature,pressure,humidity,preHum = readBME280All()
-  tempF = float(9/5 * temperature + 32.00)
-#  print('      Temperature C: {:.2f}°'.format(temperature)) 
-#  print('      Temperature F: {:.2f}°'.format(tempF)) 
-  #("Temperature : " + temperature +"C")
-#  print('          Pressure : {:.2f}hPa'.format(pressure))
-#  print('          Pressure : {:.2f}inHg'.format(pressure * 0.0295300))
-#  print('          Humidity : {:.2f}%'.format(humidity))
+  # temperature,pressure,humidity,preHum = readBME280All()
+  temperature,pressure = readBME280All()
+  tempF = float((temperature * 1.8) + 32.00)
+  print('      Temperature C: {:.2f}°'.format(temperature)) 
+  print('      Temperature F: {:.2f}°'.format(tempF)) 
+  print('          Pressure : {:.2f}hPa'.format(pressure))
+  print('          Pressure : {:.2f}inHg'.format(pressure * 0.0295300))
+  # print('          PreHum   : {:.2f}%'.format(preHum))
+  # print('          Humidity : {:.2f}%'.format(humidity))
 
 if __name__=="__main__":
    main()

@@ -4,13 +4,12 @@ After=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/home/YourUserName/out/rainMainDATA.py
-WorkingDirectory=/home/YourUserName/out/
+ExecStart=/home/greg/out/rainMainDATA.py
+WorkingDirectory=/home/greg/out/
 StandardOutput=syslog
 StandardError=syslog
-User=YourUserName
-Group=aGroupYouAreMemberOf(like'pi')
-#Group=pi
+User=greg
+Group=www-data
 #ExecStop = /bin/kill -2 $MAINPID
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID

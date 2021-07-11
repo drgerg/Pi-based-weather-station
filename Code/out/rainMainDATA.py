@@ -45,7 +45,7 @@ rainList = []
 def gotPulse(channel):
     # 0.011" of rain causes one bucket-tip (1 pulse)
     global gppulse,gpstart
-    gppulse =+ 1
+    gppulse += 1
     gpstart = time.time()
     logger.info('Got a pulse.')
     return gppulse,gpstart
@@ -76,6 +76,8 @@ def main():
             else:
                 rpulse = 0
                 gpstart=time.time()
+            # if rpulse > 0:
+                # logger.info('Appending ' + str(rpulse) + ' pulses to interList.')
             iterList = [rpulse,timeVal,gpstart,digVal]
             gppulse = 0
             gpstart = 0
@@ -85,14 +87,16 @@ def main():
 #  Part II
             if os.path.exists(RMDHome + '/rainData.pkl'):                           ## Check for .pkl file. One would exist if there had been network issues.
                 rainDataList = pickle.load(open(RMDHome + '/rainData.pkl', 'rb'))   ## Read the .pkl file contents into rainDataList.
-                logger.info('rainDataList variable was populated from rainData.pkl: ')
+                logger.debug('rainDataList is '+ str(len(rainDataList)) + " records long.") 
+                # logger.debug('rainDataList variable was populated from rainData.pkl: ')
                 os.remove(RMDHome + '/rainData.pkl')                                ## delete the .pkl file after reading it.
-                # logger.info("rainData.pkl Pickle file erased.")
+                if not os.path.exists(RMDHome + '/rainData.pkl'):
+                    logger.info("rainData.pkl Pickle file erased.")
                 for row in rainList:                                                ## Append the contents of the new rainList to rainDataList.
                     rainDataList.append(row)
-                # logger.info('Appended rainList to rainDataList.')
+                logger.debug('Appended rainList to rainDataList.')
             else:
-                # logger.info('Saving rainList to rainData.pkl.')
+                logger.debug('Saving rainList to rainData.pkl.')
                 rainDataList = rainList                                             ## if there wasn't a .pkl file, make rainDataList from rainList and move on.
         pickle.dump(rainDataList, open(RMDHome + '/rainData.pkl', 'wb+'), pickle.HIGHEST_PROTOCOL) ## Save rainDataList to the .pkl file for outMainDATA.py.
         logger.debug('rainDataList is '+ str(len(rainDataList)) + " records long and was was saved in rainData.pkl.")
