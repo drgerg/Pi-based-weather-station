@@ -14,6 +14,7 @@ There is the question of all the prerequisites for getting all this running, and
 05/13/2020 - Things are getting a bit less trashy.  It's a slow process.  I have a day job.
 05/17/2020 - Actually, now I'm feeling pretty good about this.  The weather station is chugging along happily.  I've added some long-awaited touches to my interface, which makes me feel good.
 11/28/2020 - OK.  I've finally gotten to the point where I think what I've done is worthy.  No more apologies.  It works. It works consistently and correctly.  
+07/11/2021 - WeatherPi has been running flawlessly now for many months.  I did upgrade it yesterday with a DHT22 Temp/Humidity sensor, and gave it a annual physical checkup while it was down.  I found no problems.  Sweet!
 
 ## Necessary files from the 'out' directory (WEATHER STATION CODE)
 
