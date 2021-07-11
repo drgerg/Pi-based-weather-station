@@ -18,7 +18,7 @@ My station is up and running.  It works.  I get good, accurate, stable readings 
 
 This project is not an easy one, but if I can build it, so can other people.
 
-Here's what's where:  (remember: this is all in progress still)
+Here's what's where:
 
 - **Code**: contains the Python3 code in the 'out' folder as well as the 'all' folder, which contains code for the mySQL server and browser front-end.  This folder also contains 'The_Code_is_what_it_is.md' which provides more detail on all that.
 - **Component_Docs**: contains collected documentation for the various hardware pieces of the station.  The Station_Parts_List.pdf is there.
@@ -43,7 +43,7 @@ The goal of this project is to take advantage of the availability of the modular
 
 The project is written in Python 3.
 
-I don't try to make this system available to the Internet.  It is intended to be viewed and used locally, or by means of a VPN. I do upload data to [PWSWeather.com](https://www.pwsweather.com/), which works really well.
+I don't try to make this system available to the Internet.  It is intended to be viewed and used locally, or by means of a VPN. I do upload data to [PWSWeather.com](https://www.pwsweather.com/station/pws/kflmilto35), which works really well.
 
 I am making every attempt to provide enough documentation and schematics for anyone else to duplicate what I've done.
 
