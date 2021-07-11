@@ -1,5 +1,7 @@
 # The Quest for a Reliable, Robust, Repairable Raspberry Pi-based Weather Station
 
+July 11, 2021 NOTE: I installed a DHT22 temperature and humidity sensor in WeatherPi. This sensor is more accurate than the BME280, apparently.  My experience so far proves this out.  The updated code is posted here today.
+
 November 28, 2020 NOTE: The WeatherPi made it through Hurricane Sally and the rest of the hurricane season just fine.  It recorded over two feet of rainfall, and winds in excess of 75mph before the power went out and the battery eventually died.  I am very proud of the performance of the system and tickled pink that what has become the Pi-Net works so well.
 
 Sept. 14, 2020 NOTE: The YuHan power supply died during a lightening storm.  I replaced it with the guts from a dead inexpensive UPS and a 120VAC to 12VDC supply. I replaced the UPS's dead battery with a fresh 5AH battery (which was twice the size of the original.)  If you're interested in this build, keep this in mind.  I'll get those details updated here as soon as I can. (new photos in PICS folder)
