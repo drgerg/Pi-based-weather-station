@@ -50,7 +50,7 @@ get your own system's data in them first, Then there are proper steps you need t
 
 ## Information on files in the 'all' directory (HTTP USER INTERFACE SYSTEM CODE)
 
-![Output as seen in browser.](./all/allApp_Browser_output.png)
+![Output as seen in browser.](https://github.com/casspop/Pi-based-weather-station/blob/master/Pics/Output-to-browser.jpg)
 
 In a desktop browser or on my phone, this is the screen I go to first when I want to interact with my pool controls, my security cameras, or the RRRRPWS (WeatherPi).
 
