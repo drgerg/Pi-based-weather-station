@@ -8,7 +8,7 @@ The WeatherPi is talking to the mySQL machine, which in turn is talking to [www.
 
 There are two folders in the Code repo folder: the **all** folder and the **out** folder.  The **out** folder contains code for the WeatherPi (RRRRPWS).  The **all** folder contains code that runs on a Linux box inside the house.  That computer runs mySQL, and the Python/Flask/Gunicorn/nginx browser interface for the whole shooting match.
 
-There is the question of all the prerequisites for getting all this running, and that requires a bit of writing and editing I haven't done yet.  However, nearly all of those prerequisites are covered in the Pool Controls project. [link](https://github.com/casspop/PoolControls/blob/master/Setup%20nginx%20and%20gunicorn.md)  I'm using the same sort of Python, Flask, Gunicorn, nginx setup for this project that I used for that one.
+There is the question of all the prerequisites for getting all this running, and that requires a bit of writing and editing I haven't done yet.  However, nearly all of those prerequisites are covered in the Pool Controls project. [link](https://github.com/casspop/PoolControls/blob/master/Docs/2020%20Rebuild%20Process%20Documentation.md)  I'm using the same sort of Python, Flask, Gunicorn, nginx setup for this project that I used for that one.
 
 03-28-2020 - In spite of the fact that my code is still VERY trashy, it is working as I intended, and for that reason I'm going ahead and putting it up here.  
 05/13/2020 - Things are getting a bit less trashy.  It's a slow process.  I have a day job.
