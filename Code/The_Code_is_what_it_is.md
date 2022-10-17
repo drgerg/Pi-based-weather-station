@@ -39,7 +39,7 @@ There is the question of all the prerequisites for getting all this running, and
 
 These files live in /lib/systemd/system and are owned by root:root .  Just copying them there is not enough.  You need to edit them to
 get your own system's data in them first, Then there are proper steps you need to follow to use them.
-[Learn More](https://www.raspberrypi.org/documentation/linux/usage/systemd.md)
+[Learn More](https://www.raspberrypi.org/documentation/linux/usage/systemd.md)(THIS LINK IS BROKEN. I NEED TO FIND OR MAKE A NEW ONE.)
 
 - outBgFan.service - starts the vent fan on boot.
 - outCam.service - starts the eye-on-the-sky cam on boot.
