@@ -1,5 +1,7 @@
 # The Quest for a Reliable, Robust, Repairable Raspberry Pi-based Weather Station
 
+**February, 2025 NOTE**: Over five years later, this weather station is still plugging away. There are occasional failures, but they are fixable.  That was the whole point.  I am **very** satisfied with this station as well as the home-brew front end I use to interact with it. It does exactly what it was designed to do. What more is there to say.
+
 July 11, 2021 NOTE: I added a program flow-chart to the Station_Assembly_Docs folder that gives an overview of how the code parts fit together.
 
 I just installed a DHT22 temperature and humidity sensor in WeatherPi. This sensor is more accurate than the BME280, apparently.  My experience so far proves this out.  I'm using the atmospheric pressure reading from the BME280, but now the temperature and humidity readings are coming from the DHT22.  The updated code is posted here today.
