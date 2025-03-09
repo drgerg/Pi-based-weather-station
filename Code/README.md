@@ -10,16 +10,12 @@ There are two folders in the Code repo folder: the **all** folder and the **out*
 
 There is the question of all the prerequisites for getting all this running, and that requires a bit of writing and editing I haven't done yet.  However, nearly all of those prerequisites are covered in the Pool Controls project. [link](https://github.com/casspop/PoolControls/blob/master/Docs/2020%20Rebuild%20Process%20Documentation.md)  I'm using the same sort of Python, Flask, Gunicorn, nginx setup for this project that I used for that one.
 
-03/09/2025 - Other than the occasional bump in the road, WeatherPi has continued to run and do its job.  It has exceeded my expectations and pleases me very much.
-07/11/2021 - WeatherPi has been running flawlessly now for many months.  I did upgrade it yesterday with a DHT22 Temp/Humidity sensor, and gave it a annual physical checkup while it was down.  I found no problems.  Sweet!
-11/28/2020 - OK.  I've finally gotten to the point where I think what I've done is worthy.  No more apologies.  It works. It works consistently and correctly. 
-05/17/2020 - Actually, now I'm feeling pretty good about this.  The weather station is chugging along happily.  I've added some long-awaited touches to my interface, which makes me feel good.
-05/13/2020 - Things are getting a bit less trashy.  It's a slow process.  I have a day job.
-03-28-2020 - In spite of the fact that my code is still VERY trashy, it is working as I intended, and for that reason I'm going ahead and putting it up here.  
-
-
- 
-
+- 03/09/2025 - Other than the occasional bump in the road, WeatherPi has continued to run and do its job.  It has exceeded my expectations and pleases me very much.
+- 07/11/2021 - WeatherPi has been running flawlessly now for many months.  I did upgrade it yesterday with a DHT22 Temp/Humidity sensor, and gave it a annual physical checkup while it was down.  I found no problems.  Sweet!
+- 11/28/2020 - OK.  I've finally gotten to the point where I think what I've done is worthy.  No more apologies.  It works. It works consistently and correctly. 
+- 05/17/2020 - Actually, now I'm feeling pretty good about this.  The weather station is chugging along happily.  I've added some long-awaited touches to my interface, which makes me feel good.
+- 05/13/2020 - Things are getting a bit less trashy.  It's a slow process.  I have a day job.
+- 03-28-2020 - In spite of the fact that my code is still VERY trashy, it is working as I intended, and for that reason I'm going ahead and putting it up here.  
 
 ## Necessary files from the 'out' directory (WEATHER STATION CODE)
 
