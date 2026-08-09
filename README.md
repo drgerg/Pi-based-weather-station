@@ -1,6 +1,10 @@
 # The Quest for a Reliable, Robust, Repairable Raspberry Pi-based Weather Station
 
-**February, 2025 NOTE**: Over five years later, this weather station is still plugging away. There are occasional failures, but they are fixable.  That was the whole point.  I am **very** satisfied with this station as well as the home-brew front end I use to interact with it. It does exactly what it was designed to do. What more is there to say.
+**August, 2026 NOTE**: WeatherPi is still out there doing his job.  I had a bit of trouble with some of the i2c stuff.  It seems to have just been time and humidity doing their thing. Unplugging and plugging things eventually seemed to rectify the situation.  As part of troubleshooting, I dinked around with sensor drivers enough to confuse myself.  What I know is currently WeatherPi is more stable than ever, so I'm happy.
+
+There is a new system designed to help keep things running when a sensor goes down.  Look for things labeled 'BustedStuff' if you're curious about that.  As always, ask if you want to know something.
+
+February, 2025 NOTE: Over five years later, this weather station is still plugging away. There are occasional failures, but they are fixable.  That was the whole point.  I am **very** satisfied with this station as well as the home-brew front end I use to interact with it. It does exactly what it was designed to do. What more is there to say.
 
 July 11, 2021 NOTE: I added a program flow-chart to the Station_Assembly_Docs folder that gives an overview of how the code parts fit together.
 
