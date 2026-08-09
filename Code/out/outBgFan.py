@@ -17,7 +17,13 @@
 #    You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import time,os,logging,signal,sys,argparse,pickle
+import time
+import os
+import logging
+import signal
+import sys
+import argparse
+import pickle
 from time import sleep
 import RPi.GPIO as GPIO
 
@@ -61,6 +67,9 @@ fanPwm.start(dc)
 elapse = 0
 # pElapse = 0
 lastDc = dc
+#
+##
+#
 def main():
     global elapse,lastDc
 
@@ -71,6 +80,7 @@ def main():
         ct = os.popen('vcgencmd measure_temp').readline()
         cpuRtn = ct.replace("temp=","").replace("'C\n","")
     temp1=float(cpuRtn)
+#    print("temp1 CPU temp: {}".format(temp1))
     if temp1 < 30.0:
         dc=0
     if temp1 >= 30 and temp1 <= 40:
@@ -90,8 +100,7 @@ def main():
     if temp1 > 68:
         dc=100
     fanPwm.ChangeDutyCycle(dc)
-#   Setup to do some sort of output stuff
-#    rpm = int((pulses / elapse) * 60)
+###   Get hardware status from fanSpd()
     dataSet = fanSpd()
     pulses = dataSet[0]
     elapse = dataSet[1]
@@ -101,6 +110,7 @@ def main():
 #        logger.info('CPU tempC: ' + cpuRtn +  '. Fan RPM: ' + str(rpm) + '. dc reset to ' + str(dc))
         pickle.dump(rpm, open(BGFHome + '/fanSpd.pkl', 'wb+'), pickle.HIGHEST_PROTOCOL)
     lastDc = dc
+#    print("Fan RPM: {}".format(rpm))
 #    pElapse = dataSet[1]
     return rpm
 

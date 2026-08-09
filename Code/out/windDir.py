@@ -2,6 +2,8 @@
 """ windDir.py - Get wind direction from Sparkfun SEN-08942 Weather Meters' vane.
     Reads voltage variance by means of a ADS1115 16-bit ADC.
     2019 - Gregory Allen Sanders."""
+import logging
+logger = logging.getLogger(__name__)
 
 def main():
     #    wspdret = wspd()
@@ -10,7 +12,7 @@ def main():
     import RPi.GPIO as GPIO
 
     adc = Adafruit_ADS1x15.ADS1115()
-
+    val = 0
     interval = 2   # Time between loops (seconds)
 
     # Set GPIO pins to use BCM pin numbers
@@ -19,7 +21,25 @@ def main():
     time.sleep(interval)
 
     # Calculate wind direction based on ADC reading
-    val = adc.read_adc(0, gain=1)
+    # The three 'try/except' 
+    try:
+        val = adc.read_adc(0, gain=1)
+    except OSError:
+        try:
+            time.sleep(0.1)
+            val = adc.read_adc(0, gain=1)
+            logger.info("First level OSError.")
+        except OSError:
+            try:
+                time.sleep(0.2)
+                val = adc.read_adc(0, gain=1)
+                logger.info("Second level OSError.")
+            except OSError:
+                windDir = "N"
+                windDeg = 0
+                logger.info("Third level OSError.")
+
+
     windDir = "Not Connected" # In case wind sensor not connected
     windDeg = 0
 

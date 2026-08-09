@@ -1,6 +1,24 @@
 #!/usr/bin/env python3
-import socket,os,sys,traceback
+## THIS IS THE SOCKET SERVER - IT LISTENS.
+##
+import socket
+import os
+import sys
+import traceback
 from time import sleep
+import pickle
+import logging
+
+oSockHome = os.path.abspath(os.path.dirname(__file__))
+logger = logging.getLogger(__name__)
+## Set up logging
+#
+logging.basicConfig(
+    filename=oSockHome + "/outsock.log",
+    format="%(asctime)s - %(message)s",
+    datefmt="%a, %d %b %Y %H:%M:%S",
+    level=logging.INFO,
+)
 
 host = ''
 port = 64444
@@ -31,37 +49,26 @@ while True:
             pass
         # print(incoming)
 #
-        # if 'sysStat' in data.decode('utf-8'):
-        if 'sysStat' in incoming:
-            sysList = ['outBgFan.service','outCam.service','outMainDATA.service','outWPBoot.service','rainMainDATA.service']
-            result = []
-            sysStat = []
-            listLen = str(len(sysList))
-            conn.sendall(str.encode(listLen))
-            for item in sysList:
-                status = os.system('systemctl is-active --quiet ' + item)
-                if status == 0:
-                    strStat = 'OK - '
-                else:
-                    strStat = 'NOT OK - '
-                conn.sendall(str.encode(strStat))
-                conn.sendall(str.encode(item + ':'))
-            pass
-#
-        # if 'stat' in data.decode('utf-8'):
-        if 'stat' in incoming:
-            sysList = ['outBgFan.service','outCam.service','outMainDATA.service','outWPBoot.service','rainMainDATA.service']
-            result = []
-            sysStat = []
-            listLen = str(len(sysList))
-            for item in sysList:
-                status = os.system('systemctl is-active --quiet ' + item)
-                if status == 0:
-                    strStat = 'OK'
-                else:
-                    strStat = 'NOT OK'
-                resp = '{:>14s} {:<22s}'.format(strStat + " :", item)
-                conn.sendall(str.encode(resp + '\n'))
+        # if 'busted' in data.decode('utf-8'):
+        if 'busted' in incoming:
+            with open("Busted.pkl", "wb") as bpkl:
+                while True:
+                    bytes_read = conn.recv(4096)
+                    if not bytes_read:
+                        break
+                    bpkl.write(bytes_read)
+            logger.info("Received Busted.pkl")
+            with open('Busted.pkl', 'rb') as tpmR:
+                bustedstuff = pickle.load(tpmR)
+            logger.info(bustedstuff)
+            changes = []
+            for x in bustedstuff:
+                if "off" in bustedstuff[x]:
+                    changes.append(bustedstuff[x])
+            with open("allbustedstuff.txt", "w") as abs:
+                for c in changes:
+                    abs.write(c + "\n")
+            logger.info("allbustedstuff.txt modified.")
             pass
 #
         # if 'quit' in data.decode('utf-8'):
@@ -78,18 +85,6 @@ while True:
                 incoming = 'An error was caught and displayed.'
                 pass
 # 
-        authActions = ["sysStat","stat","quit"]
-        if not any(x in incoming for x in authActions):
-            inc = incoming.rstrip()
-            outText = ('Sorry, but ' + inc + ' is not in my list of authorized actions.\n')
-            try:
-                conn.sendall(str.encode(outText))
-                pass
-            except Exception:
-                traceback.print_exc(file=sys.stdout)
-                incoming = 'An error was caught and displayed.'
-                pass
-#
         if not data:
             break
 #

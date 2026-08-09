@@ -18,7 +18,17 @@
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import time,os,logging,configparser,argparse,traceback,signal,sys,pickle,statistics
+import time
+import os
+import logging
+from logging.handlers import WatchedFileHandler
+import configparser
+import argparse
+import traceback
+import signal
+import sys
+import pickle
+#import statistics
 from time import sleep
 import RPi.GPIO as GPIO
 
@@ -26,89 +36,91 @@ import RPi.GPIO as GPIO
 ## - - - - - RAIN CODE BELOW HERE - - - - These lines log to RMD.log
 #
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(12, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(26, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setwarnings(False)
-rpulse = 0
-#rstart = time.time()
-gppulse = 0
-gpstart = 0
-timeVal = 0            
-#                      # ('r' is for 'rain'.  rpulse is "rain pulse", rstart is "rain start", get it?)
+rpulse = 0              # "reported pulse"
+gppulse = 0             # "gotPulse pulse"
+gpstart = time.time()   # "gotPulse start"
+timeVal = time.time()   # time value holder
+#
 ##  STARTING HERE WE ARE GETTING THE BUCKET TIP DATA READY FOR outMainDATA TO PICK IT UP AS IT GOES BY.
 ##  WE COLLECT IT, STACK IT UP FOR 60 SECONDS, AND LEAVE IT LAYING IN THE WORKING FOLDER IN A .pkl FILE.
 #
 iterList = []
 rainList = []
 #
-#
-def gotPulse(channel):
-    # 0.011" of rain causes one bucket-tip (1 pulse)
-    global gppulse,gpstart
-    gppulse += 1
+## The only time this function is run is if the bucket tip is reported. This is the "callback".
+def gotPulse(channel):          # 0.011" of rain causes one bucket-tip (1 pulse)
+    global gppulse,gpstart      # use global variables for "gotPulse pulse", and "gotPulse start" values.
+    if time.time() > gpstart:
+        pDiff = time.time() - gpstart
+        gppulse += 1
+        logger.info('At {} we got a pulse. Total pulses this cycle: {}. pDiff is {}'.format(gpstart,gppulse,pDiff))
     gpstart = time.time()
-    logger.info('Got a pulse.')
     return gppulse,gpstart
 
-GPIO.add_event_detect(12, GPIO.FALLING, callback=gotPulse, bouncetime=200)
-
+GPIO.add_event_detect(26, GPIO.FALLING, callback=gotPulse, bouncetime=200)
+# GPIO.add_event_detect(26, GPIO.FALLING, callback=gotPulse)
 def main():
-    global rpulse,gppulse,gpstart
-    digVal = GPIO.input(24)
-#    if digVal == 0:
-#        startCount = time.time()
-#        endCount = startCount + 3600
-    checkit = GPIO.input(12)
-    # logger.info('Input pin 12 is :' + (str(checkit)))
+    global rpulse,gppulse,gpstart           # use global variables for "reported pulse", "gotPulse pulse", and "gotPulse start" values.
+    checkit = GPIO.input(26)
     try:
-        # logger.info('Top of main() try.')
-#        while time.time() < endCount:
-        iterList = []
-        rainList = []
-        cntCycle = time.time()
-        # logger.info(int(cntCycle))
+        iterList = []                       # Zero out the list for intermediate data collection.
+        rainList = []                       # Zero out the list for compiled data collection.
+        cntCycle = time.time()              # Establish a counter variable for our 60-second loops.
 # Part I
-        while time.time() - cntCycle < 58:
-            timeVal = time.time()
-            digVal = GPIO.input(24)
-            if gppulse >= 1:
-                rpulse = gppulse
+        while time.time() - cntCycle < 58:  # Run for 58 secs, leaving 2 secs for Part II.
+            timeVal = time.time()           # current time of this pulse-check cycle.
+            if gppulse >= 1:                # There was one or more pulses, so
+                rpulse = gppulse            # hold on to number of pulses since last read.
             else:
-                rpulse = 0
-                gpstart=time.time()
-            # if rpulse > 0:
-                # logger.info('Appending ' + str(rpulse) + ' pulses to interList.')
-            iterList = [rpulse,timeVal,gpstart,digVal]
-            gppulse = 0
-            gpstart = 0
-            rainList.append(iterList)                                               ## add the most recent data to rainList.
+                rpulse = 0                  # there were no pulses.
+                gpstart=time.time()         # so reset pulse time logged value.
+            iterList = [rpulse,timeVal,gpstart]     # fill the intermediate list with the current values.
+            rainList.append(iterList)       # add the intermediate list values to the compiling list.
+            gppulse = 0                     # reset base values for next iteration.
+            gpstart = time.time()           # reset base values for next iteration.
+            rpulse = 0                      # reset base values for next iteration. (this was missing, and causing inflated reports.)
             sleep(1)
-        else:                                                                       ## After the 60 seconds (give or take) passes, do part II.
-#  Part II
-            if os.path.exists(RMDHome + '/rainData.pkl'):                           ## Check for .pkl file. One would exist if there had been network issues.
-                rainDataList = pickle.load(open(RMDHome + '/rainData.pkl', 'rb'))   ## Read the .pkl file contents into rainDataList.
-                logger.debug('rainDataList is '+ str(len(rainDataList)) + " records long.") 
-                # logger.debug('rainDataList variable was populated from rainData.pkl: ')
-                os.remove(RMDHome + '/rainData.pkl')                                ## delete the .pkl file after reading it.
+        else:                               # After the 58 seconds passes, do part II.
+#  Part II                                  # Part II ends with a file named rainData.pkl in our working folder.
+            logger.debug(rainList)
+                                            # That file is then snagged by outMainDATA.py and its contents are 
+                                            # compiled into a record which is then added to mySQL on the indoor server.
+                                            # If we are unable to connect with the indoor server, we retain the older data,
+                                            # and the newer data is appened to the record in rainData.pkl so it can all be added 
+                                            # once network connectivity is restored.  Once the data has been successfully uploaded to the 
+                                            # indoor server, rainData.pkl is deleted by outMainDATA.py.
+            if os.path.exists(RMDHome + '/rainData.pkl'):                                       # Check for .pkl file. One would exist if there had been network issues.
+                with open(RMDHome + '/rainData.pkl', 'rb') as existpkl:
+                    rainDataList = pickle.load(existpkl)                                        # Read the .pkl file contents into rainDataList.
+                logger.info('rainDataList is '+ str(len(rainDataList)) + " records long.") 
+                os.remove(RMDHome + '/rainData.pkl')                                            # delete the .pkl file after reading it.
                 if not os.path.exists(RMDHome + '/rainData.pkl'):
                     logger.info("rainData.pkl Pickle file erased.")
-                for row in rainList:                                                ## Append the contents of the new rainList to rainDataList.
+                for row in rainList:                                                            # Append the contents of the new rainList to rainDataList.
                     rainDataList.append(row)
                 logger.debug('Appended rainList to rainDataList.')
-            else:
+            else:                                                                               # There was no rainData.pkl file, so we are creating a new one here.
                 logger.debug('Saving rainList to rainData.pkl.')
-                rainDataList = rainList                                             ## if there wasn't a .pkl file, make rainDataList from rainList and move on.
-        pickle.dump(rainDataList, open(RMDHome + '/rainData.pkl', 'wb+'), pickle.HIGHEST_PROTOCOL) ## Save rainDataList to the .pkl file for outMainDATA.py.
-        logger.debug('rainDataList is '+ str(len(rainDataList)) + " records long and was was saved in rainData.pkl.")
+                rainDataList = rainList                                                         # Make rainDataList from rainList and move on.
+        with open(RMDHome + '/rainData.pkl', 'wb+') as rdpkl:
+            pickle.dump(rainDataList, rdpkl)                                                    # Save rainDataList to the .pkl file for outMainDATA.py.
+        # logger.info('rainDataList is '+ str(len(rainDataList)) + " records. Saved to  /rainData.pkl.")
+        lastTips = 0
+        for lt in rainList:
+            lastTips = lastTips + lt[0]
+        if lastTips > 0:
+            logger.info("There were {} tips counted in the last minute.".format(lastTips))
         rainList = []
         rainDataList = []
-        pass
-
-    except Exception:
-        logger.info("Exception caught at bottom of try.", exc_info=True)
+## We end up with a .pkl file that contains a list of 58 lists. Each of those contains tips,time at save,start time.
+    except Exception as e:
+        logger.info("Exception caught at bottom of try. Details: {}".format(e))
         pass
 #
-
+## outMainDATA takes it from there, resulting in another .pkl file that gets picked up by 
+## allApp.py on Brilliant.
 #
 ## = = = = = = = =  END OF RAIN CODE - START OF ERROR HANDLING, LOGGING AND WRAPUP CODE  = = = = = = = = =
 #
@@ -134,20 +146,34 @@ if __name__ == "__main__":
     group.add_argument('-d', '--debug', help="Turn on debugging output to log file.", action="store_true")
     group.add_argument('-f', '--func', help="Call the specified function.", action="store_true")
     RMDHome = os.getcwd()
-    logger = logging.getLogger(__name__)
+  
     #
     config = configparser.RawConfigParser()
     config.read(RMDHome + '/out.conf')
     #
     argsRMD = parserRMD.parse_args()
-
+    logger = logging.getLogger()
+    log_file = RMDHome + '/RMD.log'
+    log_handler = WatchedFileHandler(log_file)
     if argsRMD.debug:
-        logging.basicConfig(filename=RMDHome + '/RMD.log', format='[%(name)s]:%(levelname)s: %(message)s. - %(asctime)s', datefmt='%D %H:%M:%S', level=logging.DEBUG)
-        logging.info("Debugging output enabled")
+        logger.setLevel(logging.DEBUG)
+        log_handler.setLevel(logging.DEBUG)
+        log_formatter = logging.Formatter('[%(name)s]:%(levelname)s: %(message)s. - %(asctime)s', datefmt='%D %H:%M:%S')
+        log_handler.setFormatter(log_formatter)
+        logger.addHandler(log_handler)
+        logger.info("--======================================================--")
+        logger.info(" - - - - rainMainDATA.py LOGGING STARTED - - - - ")
+        logger.info("Logging level set to DEBUG.")
     else:
-        logging.basicConfig(filename=RMDHome + '/RMD.log', format='%(asctime)s - %(message)s', datefmt='%a, %d %b %Y %H:%M:%S', level=logging.INFO)
+        logger.setLevel(logging.INFO)
+        log_handler.setLevel(logging.INFO)
+        log_formatter = logging.Formatter('%(asctime)s - %(message)s', datefmt='%a, %d %b %Y %H:%M:%S')
+        log_handler.setFormatter(log_formatter)
+        logger.addHandler(log_handler)
+        logger.info("--======================================================--")
+        logger.info(" - - - - rainMainDATA.py LOGGING STARTED - - - - ")
+        logger.info("Logging level set to INFO.")
     #
-    logger.info(" - - - - rainMainDATA.py LOGGING STARTED - - - - ")
     logger.info("  INITIAL CONFIGURATION COMPLETE  ")
     logger.debug("'HOME' path is: " + RMDHome)
     #

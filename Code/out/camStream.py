@@ -90,7 +90,8 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 ##
 with picamera.PiCamera() as camera:
     camera.resolution = (1280,720)
-    camera.framerate = 15
+    #camera.resolution = (1640,922)
+    camera.framerate = 1
     # camera.framerate = 2              ## These four lines set up a night-time
     # camera.shutter_speed = 500000     ## mode that will capture images at night
     # camera.sensor_mode = 3            ## with the help of the outdoor lights.
@@ -100,7 +101,7 @@ with picamera.PiCamera() as camera:
     #camera.rotation = 90
     camera.start_recording(output, format='mjpeg')
     try:
-        address = ('', 8000)
+        address = ('', 8001)
         server = StreamingServer(address, StreamingHandler)
         server.serve_forever()
     finally:
