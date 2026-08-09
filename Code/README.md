@@ -1,6 +1,6 @@
-# No more apologies for my code.  I think it's fine.
+# WeatherPi is over six years old. I think that's great!
 
-This file is here out of respect for any degreed SysAdmin who has ventured here and is curious.
+You may be able to use this repo as a starting point (putting you well ahead of the curve) for getting your own such weather station going.  Or you may use it as a cautionary tale, an example of how not to build something.  It's all your choice.  If you are trying to use this stuff and need some help, reach out.
 
 This code was all written by a self-taught geek.  It works and does exactly what I wanted it to do.  So, in that respect, it's perfect.
 
